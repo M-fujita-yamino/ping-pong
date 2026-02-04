@@ -60,7 +60,6 @@
             font-size: 1.5rem; margin-top: 30px; border: 2px solid #98fb98;
         }
 
-        /* テーブル幅バランス調整 */
         .table-wrapper {
             background: white; border-radius: 30px;
             overflow-x: auto; border: 3px solid #eee; margin: 20px 0;
@@ -95,6 +94,8 @@
         .btn-add { background: var(--soft-pink); color: #d64545; }
         .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.2rem; }
         .btn-shuffle { background: var(--soft-green); color: #2e7d32; }
+        .btn-bulk { background: #eee; color: #666; padding: 5px 15px; font-size: 0.8rem; box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+        .btn-bulk:hover { background: #e0e0e0; }
 
         .select-M { color: #4169e1; font-weight: bold; }
         .select-F { color: #ff69b4; font-weight: bold; }
@@ -139,7 +140,11 @@
 
         <div class="section-title">メンバー一覧</div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
-            <button class="btn-add" onclick="addMember()">＋ 新しく追加する</button>
+            <div>
+                <button class="btn-add" onclick="addMember()">＋ 新しく追加する</button>
+                <button class="btn-bulk" style="margin-left:10px;" onclick="bulkCheck(true)">全員 参加</button>
+                <button class="btn-bulk" onclick="bulkCheck(false)">全員 不参加</button>
+            </div>
             <div style="font-weight:bold;">選んでいる人: <span id="selected-count">0</span> 名</div>
         </div>
 
@@ -220,7 +225,7 @@
             const genderClass = m.gender === 'M' ? 'select-M' : 'select-F';
             tbody.insertAdjacentHTML('beforeend', `
                 <tr>
-                    <td><input type="checkbox" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
+                    <td><input type="checkbox" class="active-check" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
                     <td>${m.id}</td>
                     <td><input type="text" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
                     <td><input type="text" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
@@ -245,7 +250,30 @@
                 </tr>
             `);
         });
+        updateCount();
+    }
+
+    function updateCount() {
         document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
+    }
+
+    // 一括チェック機能
+    async function bulkCheck(bool) {
+        if(!confirm((bool ? "全員参加" : "全員不参加") + "にしますか？")) return;
+        
+        // 画面上の全チェックボックスを更新
+        const checks = document.querySelectorAll('.active-check');
+        checks.forEach(c => c.checked = bool);
+        
+        // メモリ内のデータを更新
+        membersDB.forEach(m => m.active = bool);
+        updateCount();
+
+        // GAS側に一括更新リクエストを送信 (API側がバルク更新に対応していない場合は個別送信になります)
+        // ここでは個別IDごとにリクエストを投げます
+        for(let m of membersDB) {
+            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
+        }
     }
 
     async function sendUpdate(id, field, value) {
@@ -255,6 +283,7 @@
             if(field === 'level') m.type = levelMap[value];
         }
         if(field !== 'name' && field !== 'kana') renderTable();
+        else updateCount();
         fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
     }
 
@@ -288,7 +317,6 @@
         let participants = membersDB.filter(m => m.active);
         if (participants.length < 3) return alert("3人以上選んでね！");
 
-        // 初期ロジック: 練度ごとに分けてシャッフルし、蛇行型（S字）で配分
         let groups = {1:[], 2:[], 3:[], 4:[], 5:[], 'other':[]};
         participants.forEach(p => {
             if (groups[p.level]) groups[p.level].push(p);
