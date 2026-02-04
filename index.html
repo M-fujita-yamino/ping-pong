@@ -49,10 +49,7 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.05);
         }
 
-        h1 {
-            text-align: center; font-size: 3rem; color: #ff6f61;
-            margin: 0 0 20px 0;
-        }
+        h1 { text-align: center; font-size: 3rem; color: #ff6f61; margin: 0 0 20px 0; }
 
         .section-title {
             background: var(--soft-green); display: inline-block;
@@ -65,27 +62,15 @@
             overflow-x: auto; border: 3px solid #eee; margin: 20px 0;
         }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 900px; }
-        th { 
-            background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; 
-            cursor: pointer; user-select: none; position: relative;
-        }
+        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; cursor: pointer; user-select: none; }
         th:hover { background-color: #89c4f4; }
-        th.no-sort { cursor: default; }
-        th.no-sort:hover { background-color: var(--primary-blue); }
         td { padding: 10px; border-bottom: 1px solid #f0f0f0; text-align: center; }
 
-        /* 列幅の指定 */
-        .col-check { width: 45px; }
-        .col-id { width: 45px; }
-        .col-name { width: 160px; }
-        .col-kana { width: 160px; }
-        .col-gender { width: 90px; }
-        .col-gen { width: 100px; }
-        .col-level { width: 110px; }
-        .col-rank { width: 45px; }
-        .col-del { width: 60px; }
+        .col-check { width: 45px; } .col-id { width: 45px; } .col-name { width: 160px; }
+        .col-kana { width: 160px; } .col-gender { width: 90px; } .col-gen { width: 100px; }
+        .col-level { width: 110px; } .col-rank { width: 45px; } .col-del { width: 60px; }
 
-        input[type="text"], select {
+        input[type="text"], input[type="password"], select {
             width: 95%; padding: 8px; border: 2px solid #f0f0f0;
             border-radius: 12px; font-family: inherit; box-sizing: border-box;
         }
@@ -99,33 +84,22 @@
         
         .btn-add { background: var(--soft-pink); color: #d64545; }
         .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.2rem; }
-        .btn-shuffle { background: var(--soft-green); color: #2e7d32; }
-        .btn-bulk { background: #eee; color: #666; padding: 5px 15px; font-size: 0.8rem; box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-        .btn-bulk:hover { background: #e0e0e0; }
+        .btn-bulk { background: #eee; color: #666; padding: 5px 15px; font-size: 0.8rem; }
 
         .select-M { color: #4169e1; font-weight: bold; }
         .select-F { color: #ff69b4; font-weight: bold; }
-        .rank-badge {
-            display: inline-block; padding: 2px 6px; border-radius: 8px;
-            font-size: 0.8rem; color: white; background: #ccc;
-        }
+        .rank-badge { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 0.8rem; color: white; background: #ccc; }
         .rank-1 { background: #d63031; } .rank-2 { background: #e17055; }
         .rank-3 { background: #fdcb6e; color: #333; } .rank-4 { background: #0984e3; }
         .rank-5 { background: #00b894; }
 
-        .sort-icon { font-size: 0.7em; margin-left: 5px; opacity: 0.7; }
+        #result-area { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px; }
+        .team-card { background: #fff; border: 4px solid var(--soft-green); border-radius: 35px; width: 260px; padding: 20px; }
+        .team-title { font-size: 1.4rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 10px; }
 
-        #result-area {
-            display: flex; flex-wrap: wrap; gap: 20px;
-            justify-content: center; margin-top: 30px;
-        }
-        .team-card {
-            background: #fff; border: 4px solid var(--soft-green);
-            border-radius: 35px; width: 260px; padding: 20px;
-        }
-        .team-title {
-            font-size: 1.4rem; color: #4db6ac; text-align: center;
-            border-bottom: 2px dashed #eee; margin-bottom: 10px;
+        /* 設定パネル用 */
+        .settings-panel {
+            background: #fff; padding: 20px; border-radius: 30px; border: 2px solid #eee; margin-top: 40px;
         }
     </style>
 </head>
@@ -153,7 +127,7 @@
                 <button class="btn-bulk" style="margin-left:10px;" onclick="bulkCheck(true)">全員 参加</button>
                 <button class="btn-bulk" onclick="bulkCheck(false)">全員 不参加</button>
             </div>
-            <div style="font-weight:bold;">選んでいる人: <span id="selected-count">0</span> 名</div>
+            <div style="font-weight:bold;">参加予定: <span id="selected-count">0</span> 名</div>
         </div>
 
         <div class="table-wrapper">
@@ -161,12 +135,12 @@
                 <thead>
                     <tr>
                         <th class="col-check no-sort">参加</th>
-                        <th class="col-id" onclick="sortBy('id')">No <span id="sort-id" class="sort-icon"></span></th>
-                        <th class="col-name" onclick="sortBy('name')">氏名 <span id="sort-name" class="sort-icon"></span></th>
-                        <th class="col-kana" onclick="sortBy('kana')">フリガナ <span id="sort-kana" class="sort-icon"></span></th>
-                        <th class="col-gender" onclick="sortBy('gender')">性別 <span id="sort-gender" class="sort-icon"></span></th>
-                        <th class="col-gen" onclick="sortBy('gen')">世代 <span id="sort-gen" class="sort-icon"></span></th>
-                        <th class="col-level" onclick="sortBy('level')">練度 <span id="sort-level" class="sort-icon"></span></th>
+                        <th class="col-id" onclick="sortBy('id')">No</th>
+                        <th class="col-name" onclick="sortBy('name')">氏名</th>
+                        <th class="col-kana" onclick="sortBy('kana')">フリガナ</th>
+                        <th class="col-gender" onclick="sortBy('gender')">性別</th>
+                        <th class="col-gen" onclick="sortBy('gen')">世代</th>
+                        <th class="col-level" onclick="sortBy('level')">練度</th>
                         <th class="col-rank no-sort">R</th>
                         <th class="col-del no-sort">削除</th>
                     </tr>
@@ -184,26 +158,72 @@
             <button class="btn-exec" onclick="generateTeams()">チームを決める！</button>
             <button class="btn-shuffle" style="margin-left:10px;" onclick="generateTeams()">🔄 やりなおす</button>
         </div>
-
         <div id="result-area"></div>
+
+        <div class="section-title">システム設定</div>
+        <div class="settings-panel">
+            <div style="margin-bottom:15px;">
+                <label style="cursor:pointer; font-weight:bold;">
+                    <input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 起動時のパスワード認証をスキップする（しない場合はオフ）
+                </label>
+            </div>
+            <div>
+                <label style="font-weight:bold;">合言葉の変更:</label>
+                <input type="text" id="pass-setting" style="width:200px; margin-left:10px;" placeholder="新しい合言葉" onchange="saveSystemSettings()">
+                <small style="display:block; color:#888; margin-top:5px;">※変更後、次回入室時から有効になります。現在の合言葉: <span id="current-pass-label"></span></small>
+            </div>
+            <button class="btn-bulk" style="margin-top:15px;" onclick="localStorage.removeItem('tabletennis_auth'); location.reload();">ログアウト（再認証テスト）</button>
+        </div>
     </div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
-    const CORRECT_PASS = "iketaku";
+    
+    // 設定の初期化
+    let config = {
+        pass: localStorage.getItem("iketaku_pass") || "iketaku",
+        skip: localStorage.getItem("iketaku_skip") === "true"
+    };
 
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
     const levelMap = { 1: "師範", 2: "ｺｰﾁ", 3: "ﾍﾞﾃﾗﾝ", 4: "ﾚｷﾞｭﾗｰ", 5: "ﾋﾞｷﾞﾅｰ" };
 
+    window.onload = function() {
+        document.getElementById('pass-setting').value = config.pass;
+        document.getElementById('current-pass-label').textContent = config.pass;
+        document.getElementById('skip-auth-check').checked = config.skip;
+
+        // 認証スキップがONならそのまま表示
+        if(config.skip) {
+            showApp();
+        } else if(localStorage.getItem("tabletennis_auth") === config.pass) {
+            showApp();
+        }
+    };
+
     function checkPass() {
-        if(document.getElementById('pass-input').value === CORRECT_PASS) {
-            localStorage.setItem("tabletennis_auth", CORRECT_PASS);
+        const input = document.getElementById('pass-input').value;
+        if(input === config.pass) {
+            localStorage.setItem("tabletennis_auth", input);
             showApp();
         } else {
             document.getElementById('login-msg').textContent = "合言葉が違うみたい...";
         }
+    }
+
+    function saveSystemSettings() {
+        const newPass = document.getElementById('pass-setting').value || "iketaku";
+        const newSkip = document.getElementById('skip-auth-check').checked;
+        
+        localStorage.setItem("iketaku_pass", newPass);
+        localStorage.setItem("iketaku_skip", newSkip);
+        
+        config.pass = newPass;
+        config.skip = newSkip;
+        document.getElementById('current-pass-label').textContent = newPass;
+        alert("設定を保存しました。");
     }
 
     function showApp() {
@@ -211,10 +231,6 @@
         document.getElementById('main-app').style.display = 'block';
         loadData();
     }
-
-    window.onload = function() {
-        if(localStorage.getItem("tabletennis_auth") === CORRECT_PASS) showApp();
-    };
 
     async function loadData() {
         try {
@@ -225,38 +241,15 @@
     }
 
     function sortBy(key) {
-        if (currentSort.key === key) {
-            currentSort.order *= -1;
-        } else {
-            currentSort.key = key;
-            currentSort.order = 1;
-        }
+        currentSort.order = (currentSort.key === key) ? currentSort.order * -1 : 1;
+        currentSort.key = key;
         renderTable();
     }
 
     function renderTable() {
         const tbody = document.getElementById('member-list');
         tbody.innerHTML = '';
-        
-        // 並び替え処理
-        membersDB.sort((a, b) => {
-            let valA = a[currentSort.key];
-            let valB = b[currentSort.key];
-            if (typeof valA === 'string') {
-                valA = valA.toLowerCase();
-                valB = valB.toLowerCase();
-                if (valA < valB) return -1 * currentSort.order;
-                if (valA > valB) return 1 * currentSort.order;
-                return 0;
-            } else {
-                return (valA - valB) * currentSort.order;
-            }
-        });
-
-        // ソートアイコンの更新
-        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
-        const targetIcon = document.getElementById('sort-' + currentSort.key);
-        if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
+        membersDB.sort((a, b) => (a[currentSort.key] > b[currentSort.key] ? 1 : -1) * currentSort.order);
 
         membersDB.forEach(m => {
             const genderClass = m.gender === 'M' ? 'select-M' : 'select-F';
