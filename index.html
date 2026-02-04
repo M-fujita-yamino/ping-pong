@@ -65,7 +65,13 @@
             overflow-x: auto; border: 3px solid #eee; margin: 20px 0;
         }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 900px; }
-        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; }
+        th { 
+            background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; 
+            cursor: pointer; user-select: none; position: relative;
+        }
+        th:hover { background-color: #89c4f4; }
+        th.no-sort { cursor: default; }
+        th.no-sort:hover { background-color: var(--primary-blue); }
         td { padding: 10px; border-bottom: 1px solid #f0f0f0; text-align: center; }
 
         /* 列幅の指定 */
@@ -106,6 +112,8 @@
         .rank-1 { background: #d63031; } .rank-2 { background: #e17055; }
         .rank-3 { background: #fdcb6e; color: #333; } .rank-4 { background: #0984e3; }
         .rank-5 { background: #00b894; }
+
+        .sort-icon { font-size: 0.7em; margin-left: 5px; opacity: 0.7; }
 
         #result-area {
             display: flex; flex-wrap: wrap; gap: 20px;
@@ -152,15 +160,15 @@
             <table>
                 <thead>
                     <tr>
-                        <th class="col-check">参加</th>
-                        <th class="col-id" onclick="sortBy('id')">No</th>
-                        <th class="col-name">氏名</th>
-                        <th class="col-kana">フリガナ</th>
-                        <th class="col-gender">性別</th>
-                        <th class="col-gen">世代</th>
-                        <th class="col-level">練度</th>
-                        <th class="col-rank">R</th>
-                        <th class="col-del">削除</th>
+                        <th class="col-check no-sort">参加</th>
+                        <th class="col-id" onclick="sortBy('id')">No <span id="sort-id" class="sort-icon"></span></th>
+                        <th class="col-name" onclick="sortBy('name')">氏名 <span id="sort-name" class="sort-icon"></span></th>
+                        <th class="col-kana" onclick="sortBy('kana')">フリガナ <span id="sort-kana" class="sort-icon"></span></th>
+                        <th class="col-gender" onclick="sortBy('gender')">性別 <span id="sort-gender" class="sort-icon"></span></th>
+                        <th class="col-gen" onclick="sortBy('gen')">世代 <span id="sort-gen" class="sort-icon"></span></th>
+                        <th class="col-level" onclick="sortBy('level')">練度 <span id="sort-level" class="sort-icon"></span></th>
+                        <th class="col-rank no-sort">R</th>
+                        <th class="col-del no-sort">削除</th>
                     </tr>
                 </thead>
                 <tbody id="member-list"></tbody>
@@ -216,10 +224,39 @@
         } catch (e) { console.error("Load Error"); }
     }
 
+    function sortBy(key) {
+        if (currentSort.key === key) {
+            currentSort.order *= -1;
+        } else {
+            currentSort.key = key;
+            currentSort.order = 1;
+        }
+        renderTable();
+    }
+
     function renderTable() {
         const tbody = document.getElementById('member-list');
         tbody.innerHTML = '';
-        membersDB.sort((a, b) => (a[currentSort.key] > b[currentSort.key] ? 1 : -1) * currentSort.order);
+        
+        // 並び替え処理
+        membersDB.sort((a, b) => {
+            let valA = a[currentSort.key];
+            let valB = b[currentSort.key];
+            if (typeof valA === 'string') {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+                if (valA < valB) return -1 * currentSort.order;
+                if (valA > valB) return 1 * currentSort.order;
+                return 0;
+            } else {
+                return (valA - valB) * currentSort.order;
+            }
+        });
+
+        // ソートアイコンの更新
+        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
+        const targetIcon = document.getElementById('sort-' + currentSort.key);
+        if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
 
         membersDB.forEach(m => {
             const genderClass = m.gender === 'M' ? 'select-M' : 'select-F';
@@ -257,20 +294,10 @@
         document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
     }
 
-    // 一括チェック機能
     async function bulkCheck(bool) {
         if(!confirm((bool ? "全員参加" : "全員不参加") + "にしますか？")) return;
-        
-        // 画面上の全チェックボックスを更新
-        const checks = document.querySelectorAll('.active-check');
-        checks.forEach(c => c.checked = bool);
-        
-        // メモリ内のデータを更新
         membersDB.forEach(m => m.active = bool);
-        updateCount();
-
-        // GAS側に一括更新リクエストを送信 (API側がバルク更新に対応していない場合は個別送信になります)
-        // ここでは個別IDごとにリクエストを投げます
+        renderTable();
         for(let m of membersDB) {
             fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
         }
@@ -297,12 +324,6 @@
         if(!confirm(name + "さんを消す？")) return;
         await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) });
         loadData();
-    }
-
-    function sortBy(key) {
-        currentSort.order *= (currentSort.key === key) ? -1 : 1;
-        currentSort.key = key;
-        renderTable();
     }
 
     function shuffleArray(array) {
