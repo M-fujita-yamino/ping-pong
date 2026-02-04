@@ -3,173 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>池田市ジュニア卓球 名簿管理</title>
+    <title>池田ジュニア卓球 名簿管理</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
-        
-        /* ロック画面 */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        #login-box { background: white; padding: 30px; border-radius: 10px; text-align: center; color: #333; width: 300px; }
-        #pass-input { padding: 10px; font-size: 16px; width: 80%; margin-bottom: 15px; text-align: center; letter-spacing: 2px; }
-
-        /* メイン画面設定 (レスポンシブ対応) */
-        #main-app { display: none; padding: 10px; } 
-        
-        .container { 
-            width: 95%; 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            background: #fff; 
-            padding: 15px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            border-radius: 8px; 
-        }
-        
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; font-size: 1.5rem; }
-        p.status-bar { text-align: center; font-size: 0.9em; height: 20px; margin-bottom: 15px; font-weight: bold; }
-        .status-loading { color: #e67e22; }
-        .status-success { color: #27ae60; }
-        .status-error { color: #c0392b; }
-
-        /* テーブル設定 */
-        .table-wrapper { 
-            max-height: 60vh; 
-            overflow-y: auto; 
-            border: 1px solid #ddd; 
-            margin-bottom: 20px; 
-        }
-        
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            table-layout: fixed; 
-            min-width: 900px; 
-        }
-        
-        th, td { 
-            padding: 8px 4px; 
-            border-bottom: 1px solid #ddd; 
-            text-align: center; 
-            vertical-align: middle; 
-            font-size: 14px;
+        :root {
+            --primary-blue: #a3d9ff;
+            --soft-pink: #ffb3ba;
+            --soft-yellow: #ffffba;
+            --soft-green: #baffc9;
+            --ikeda-orange: #ffcc5c;
+            --text-color: #5a5a5a;
         }
 
-        th { 
-            background-color: #0056b3; 
-            color: white; 
-            position: sticky; 
-            top: 0; 
-            z-index: 10; 
-            cursor: pointer; 
-            user-select: none;
-            white-space: nowrap; 
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f9ff;
+            color: var(--text-color);
+            margin: 0; padding: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M10 10c5 0 5 5 10 5s5-5 10-5' stroke='%23a3d9ff' fill='none'/%3E%3Ccircle cx='80' cy='20' r='3' fill='%23ffcc5c'/%3E%3C/svg%3E");
+            background-attachment: fixed;
         }
-        th:hover { background-color: #004494; }
-        th.no-sort { cursor: default; }
-        th.no-sort:hover { background-color: #0056b3; }
-        tr:hover { background-color: #f9f9f9; }
 
-        /* 列幅の設定 */
-        th.col-check { width: 4%; }
-        th.col-id    { width: 5%; }
-        th.col-name  { width: 18%; } 
-        th.col-kana  { width: 18%; } 
-        th.col-gender{ width: 10%; } /* 少し幅を広げました */
-        th.col-gen   { width: 12%; }
-        th.col-level { width: 15%; }
-        th.col-rank  { width: 5%; }
-        th.col-del   { width: 8%; }
-
-        input[type="text"], select { 
-            width: 95%; 
-            padding: 6px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            font-size: 14px; 
-            box-sizing: border-box; 
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(163, 217, 255, 0.95); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
         }
+        #login-box {
+            background: white; padding: 40px; border-radius: 40px;
+            text-align: center; border: 6px solid var(--ikeda-orange);
+            width: 320px;
+        }
+        #pass-input {
+            padding: 12px; font-size: 1.2rem; width: 80%;
+            border: 3px solid #eee; border-radius: 15px;
+            text-align: center; margin: 20px 0; font-family: inherit;
+        }
+
+        #main-app { display: none; padding: 20px; }
+        .container {
+            max-width: 1200px; margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px; border-radius: 50px;
+            border: 5px solid var(--primary-blue);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center; font-size: 3rem; color: #ff6f61;
+            margin: 0 0 20px 0;
+        }
+
+        .section-title {
+            background: var(--soft-green); display: inline-block;
+            padding: 5px 25px; border-radius: 30px;
+            font-size: 1.5rem; margin-top: 30px; border: 2px solid #98fb98;
+        }
+
+        /* テーブル幅バランス調整 */
+        .table-wrapper {
+            background: white; border-radius: 30px;
+            overflow-x: auto; border: 3px solid #eee; margin: 20px 0;
+        }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 900px; }
+        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; }
+        td { padding: 10px; border-bottom: 1px solid #f0f0f0; text-align: center; }
+
+        /* 列幅の指定 */
+        .col-check { width: 45px; }
+        .col-id { width: 45px; }
+        .col-name { width: 160px; }
+        .col-kana { width: 160px; }
+        .col-gender { width: 90px; }
+        .col-gen { width: 100px; }
+        .col-level { width: 110px; }
+        .col-rank { width: 45px; }
+        .col-del { width: 60px; }
+
+        input[type="text"], select {
+            width: 95%; padding: 8px; border: 2px solid #f0f0f0;
+            border-radius: 12px; font-family: inherit; box-sizing: border-box;
+        }
+
+        button {
+            border: none; border-radius: 25px; padding: 10px 25px;
+            font-family: inherit; font-weight: bold; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        button:active { transform: translateY(3px); box-shadow: none; }
         
-        @media (max-width: 768px) {
-            .container { width: 100%; padding: 5px; }
-            h1 { font-size: 1.2rem; }
-            input[type="text"], select { font-size: 16px; padding: 8px; }
+        .btn-add { background: var(--soft-pink); color: #d64545; }
+        .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.2rem; }
+        .btn-shuffle { background: var(--soft-green); color: #2e7d32; }
+
+        .select-M { color: #4169e1; font-weight: bold; }
+        .select-F { color: #ff69b4; font-weight: bold; }
+        .rank-badge {
+            display: inline-block; padding: 2px 6px; border-radius: 8px;
+            font-size: 0.8rem; color: white; background: #ccc;
         }
+        .rank-1 { background: #d63031; } .rank-2 { background: #e17055; }
+        .rank-3 { background: #fdcb6e; color: #333; } .rank-4 { background: #0984e3; }
+        .rank-5 { background: #00b894; }
 
-        .select-M { color: blue; font-weight: bold; }
-        .select-F { color: #d63384; font-weight: bold; }
-
-        .controls { text-align: center; margin: 20px 0; background: #eee; padding: 15px; border-radius: 8px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; }
-        button { border: none; padding: 12px 25px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background 0.3s; font-weight: bold; color: white; white-space: nowrap; }
-        .btn-exec { background-color: #28a745; }
-        .btn-shuffle { background-color: #e67e22; }
-        .btn-add { background-color: #0984e3; font-size: 14px; padding: 8px 15px; margin-bottom: 10px; }
-        .btn-delete { background-color: #e74c3c; padding: 6px 10px; font-size: 12px; border-radius: 3px; width: auto; }
-        
-        .radio-group { font-weight: bold; color: #555; background: #fff; padding: 8px 15px; border-radius: 20px; border: 1px solid #ccc; white-space: nowrap; }
-        .rank-badge { display: inline-block; padding: 2px 4px; border-radius: 3px; font-size: 0.8em; color: white; min-width: 25px; text-align: center; }
-        .rank-1 { background-color: #d63031; } .rank-2 { background-color: #e17055; } .rank-3 { background-color: #fdcb6e; color: #333; } .rank-4 { background-color: #0984e3; } .rank-5 { background-color: #00b894; } 
-
-        .sort-icon { font-size: 0.8em; margin-left: 5px; opacity: 0.8; }
-
-        #result-area { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
-        .team-card { background: #fff; border: 2px solid #e9ecef; border-radius: 8px; width: 260px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .team-title { font-size: 1.1em; font-weight: bold; margin-bottom: 8px; text-align: center; color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px;}
-        .team-stats { font-size: 0.8em; color: #555; text-align: center; margin-bottom: 8px; background: #f8f9fa; padding: 5px; border-radius: 4px; }
-        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dotted #ccc; font-size: 0.9em; }
+        #result-area {
+            display: flex; flex-wrap: wrap; gap: 20px;
+            justify-content: center; margin-top: 30px;
+        }
+        .team-card {
+            background: #fff; border: 4px solid var(--soft-green);
+            border-radius: 35px; width: 260px; padding: 20px;
+        }
+        .team-title {
+            font-size: 1.4rem; color: #4db6ac; text-align: center;
+            border-bottom: 2px dashed #eee; margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div id="login-overlay">
     <div id="login-box">
-        <h3>🏓 関係者認証</h3>
-        <p>合言葉を入力してください</p>
-        <input type="password" id="pass-input" placeholder="パスワード">
+        <h2>池田ジュニア卓球</h2>
+        <p>🏓 合言葉を入力してね</p>
+        <input type="password" id="pass-input">
         <br>
-        <button onclick="checkPass()" style="background:#0056b3; margin-top:10px;">入室</button>
-        <p id="login-msg" style="color:red; font-size:0.8em; min-height:1.2em;"></p>
+        <button class="btn-exec" onclick="checkPass()">入室する</button>
+        <p id="login-msg" style="color:red; min-height:20px;"></p>
     </div>
 </div>
 
 <div id="main-app">
     <div class="container">
-        <h1>🏓 名簿＆チーム分け</h1>
-        <p id="status-msg" class="status-bar">データを読み込んでいます...</p>
+        <h1>池田ジュニア卓球 🐨🏯🍜</h1>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-            <button class="btn-add" onclick="addMember()">＋ 新規メンバー追加</button>
-            <div style="font-weight:bold; font-size:0.9em;">
-                現在選択中: <span id="selected-count">0</span> 名
-            </div>
+        <div class="section-title">メンバー一覧</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+            <button class="btn-add" onclick="addMember()">＋ 新しく追加する</button>
+            <div style="font-weight:bold;">選んでいる人: <span id="selected-count">0</span> 名</div>
         </div>
 
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th class="col-check no-sort">参加</th>
-                        <th class="col-id" onclick="sortBy('id')">No <span id="sort-id" class="sort-icon"></span></th>
-                        <th class="col-name" onclick="sortBy('kana')">氏名 <span id="sort-kana" class="sort-icon"></span></th>
-                        <th class="col-kana" onclick="sortBy('kana')">フリガナ <span id="sort-kana-2" class="sort-icon"></span></th>
-                        <th class="col-gender" onclick="sortBy('gender')">性別 <span id="sort-gender" class="sort-icon"></span></th>
-                        <th class="col-gen" onclick="sortBy('gen')">世代 <span id="sort-gen" class="sort-icon"></span></th>
-                        <th class="col-level" onclick="sortBy('level')">練度 <span id="sort-level" class="sort-icon"></span></th>
-                        <th class="col-rank no-sort">R</th>
-                        <th class="col-del no-sort">削除</th>
+                        <th class="col-check">参加</th>
+                        <th class="col-id" onclick="sortBy('id')">No</th>
+                        <th class="col-name">氏名</th>
+                        <th class="col-kana">フリガナ</th>
+                        <th class="col-gender">性別</th>
+                        <th class="col-gen">世代</th>
+                        <th class="col-level">練度</th>
+                        <th class="col-rank">R</th>
+                        <th class="col-del">削除</th>
                     </tr>
                 </thead>
                 <tbody id="member-list"></tbody>
             </table>
         </div>
 
-        <div class="controls">
-            <div class="radio-group">
-                <label style="margin-right: 15px;"><input type="radio" name="teamSize" value="4" checked> 4人チーム優先</label>
-                <label><input type="radio" name="teamSize" value="3"> 3人チーム優先</label>
+        <div class="section-title">チーム分け機能</div>
+        <div style="text-align:center; margin-top:20px; background:rgba(255,255,255,0.7); padding:25px; border-radius:30px;">
+            <div style="margin-bottom:20px;">
+                <label><input type="radio" name="teamSize" value="4" checked> 4人チーム優先</label>
+                <label style="margin-left:20px;"><input type="radio" name="teamSize" value="3"> 3人チーム優先</label>
             </div>
-            <button class="btn-exec" onclick="generateTeams()">チーム分けを実行</button>
-            <button class="btn-shuffle" onclick="generateTeams()">🔄 洗替</button>
+            <button class="btn-exec" onclick="generateTeams()">チームを決める！</button>
+            <button class="btn-shuffle" style="margin-left:10px;" onclick="generateTeams()">🔄 やりなおす</button>
         </div>
+
         <div id="result-area"></div>
     </div>
 </div>
@@ -180,191 +182,100 @@
 
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
-
-    const genOptions = ["ｼﾞｭﾆｱ", "ﾔﾝｸﾞ", "ｱﾀﾞﾙﾄ", "ｼﾆｱ"];
     const levelMap = { 1: "師範", 2: "ｺｰﾁ", 3: "ﾍﾞﾃﾗﾝ", 4: "ﾚｷﾞｭﾗｰ", 5: "ﾋﾞｷﾞﾅｰ" };
-    const statusMsg = document.getElementById('status-msg');
 
-    window.onload = function() {
-        if(localStorage.getItem("tabletennis_auth") === CORRECT_PASS) showApp();
-    };
     function checkPass() {
-        const input = document.getElementById('pass-input').value;
-        if(input === CORRECT_PASS) {
-            localStorage.setItem("tabletennis_auth", input);
+        if(document.getElementById('pass-input').value === CORRECT_PASS) {
+            localStorage.setItem("tabletennis_auth", CORRECT_PASS);
             showApp();
         } else {
-            document.getElementById('login-msg').textContent = "合言葉が違います";
+            document.getElementById('login-msg').textContent = "合言葉が違うみたい...";
         }
     }
+
     function showApp() {
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         loadData();
     }
 
+    window.onload = function() {
+        if(localStorage.getItem("tabletennis_auth") === CORRECT_PASS) showApp();
+    };
+
     async function loadData() {
         try {
-            statusMsg.textContent = "データ取得中...";
-            statusMsg.className = "status-bar status-loading";
             const res = await fetch(API_URL);
             membersDB = await res.json();
             renderTable();
-            statusMsg.textContent = "完了";
-            statusMsg.className = "status-bar status-success";
-            setTimeout(() => { statusMsg.textContent = ""; }, 2000);
-        } catch (e) {
-            statusMsg.textContent = "データ取得エラー";
-            statusMsg.className = "status-bar status-error";
-        }
-    }
-
-    async function sendUpdate(id, field, value) {
-        statusMsg.textContent = "保存中...";
-        statusMsg.className = "status-bar status-loading";
-        
-        const member = membersDB.find(m => m.id === id);
-        if (member) {
-            if (field === 'level') {
-                member.level = parseInt(value);
-                member.type = levelMap[member.level];
-            } else {
-                member[field] = value;
-            }
-            if(field !== 'name' && field !== 'kana') renderTable();
-        }
-
-        try {
-            await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: 'update', id: id, field: field, value: value })
-            });
-            statusMsg.textContent = "保存しました";
-            statusMsg.className = "status-bar status-success";
-            setTimeout(() => { statusMsg.textContent = ""; }, 1500);
-        } catch (e) {
-            statusMsg.textContent = "保存エラー";
-            statusMsg.className = "status-bar status-error";
-        }
-    }
-
-    async function addMember() {
-        if(!confirm("新規メンバーを追加しますか？")) return;
-        statusMsg.textContent = "追加中...";
-        statusMsg.className = "status-bar status-loading";
-        try {
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) });
-            await loadData();
-            statusMsg.textContent = "追加しました";
-            statusMsg.className = "status-bar status-success";
-        } catch (e) { statusMsg.textContent = "追加エラー"; statusMsg.className = "status-bar status-error"; }
-    }
-
-    async function deleteMember(id, name) {
-        if(!confirm(`「${name}」さんを削除しますか？`)) return;
-        statusMsg.textContent = "削除中...";
-        statusMsg.className = "status-bar status-loading";
-        try {
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id: id }) });
-            membersDB = membersDB.filter(m => m.id !== id);
-            renderTable();
-            statusMsg.textContent = "削除しました";
-            statusMsg.className = "status-bar status-success";
-        } catch (e) { statusMsg.textContent = "削除エラー"; statusMsg.className = "status-bar status-error"; }
-    }
-
-    function sortBy(key) {
-        if (currentSort.key === key) {
-            currentSort.order *= -1;
-        } else {
-            currentSort.key = key;
-            currentSort.order = 1;
-        }
-        renderTable();
+        } catch (e) { console.error("Load Error"); }
     }
 
     function renderTable() {
-        const tableBody = document.getElementById('member-list');
-        let html = '';
+        const tbody = document.getElementById('member-list');
+        tbody.innerHTML = '';
+        membersDB.sort((a, b) => (a[currentSort.key] > b[currentSort.key] ? 1 : -1) * currentSort.order);
 
-        membersDB.sort((a, b) => {
-            let valA = a[currentSort.key];
-            let valB = b[currentSort.key];
-            if (typeof valA === 'string') {
-                valA = valA.toLowerCase();
-                valB = valB.toLowerCase();
-                if (valA < valB) return -1 * currentSort.order;
-                if (valA > valB) return 1 * currentSort.order;
-                return 0;
-            } else {
-                return (valA - valB) * currentSort.order;
-            }
-        });
-
-        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
-        const icon = currentSort.order === 1 ? '▲' : '▼';
-        if(currentSort.key === 'kana') {
-            if(document.getElementById('sort-kana')) document.getElementById('sort-kana').textContent = icon;
-            if(document.getElementById('sort-kana-2')) document.getElementById('sort-kana-2').textContent = icon;
-        } else {
-            const target = document.getElementById('sort-' + currentSort.key);
-            if(target) target.textContent = icon;
-        }
-
-        membersDB.forEach(member => {
-            const checked = member.active ? 'checked' : '';
-            const rankClass = `rank-${member.level}`;
-            const nameInput = `<input type="text" value="${member.name}" onchange="sendUpdate(${member.id}, 'name', this.value)">`;
-            const kanaInput = `<input type="text" value="${member.kana || ''}" onchange="sendUpdate(${member.id}, 'kana', this.value)">`;
-            
-            const genderClass = member.gender === 'M' ? 'select-M' : 'select-F';
-            // ▼ 性別表記を「男性」「女性」に変更
-            let genderSelect = `<select class="${genderClass}" onchange="sendUpdate(${member.id}, 'gender', this.value)">
-                <option value="M" ${member.gender === 'M' ? 'selected' : ''}>男性</option>
-                <option value="F" ${member.gender === 'F' ? 'selected' : ''}>女性</option>
-            </select>`;
-
-            let genSelect = `<select onchange="sendUpdate(${member.id}, 'gen', this.value)">`;
-            genOptions.forEach(opt => {
-                const selected = member.gen === opt ? 'selected' : '';
-                genSelect += `<option value="${opt}" ${selected}>${opt}</option>`;
-            });
-            genSelect += `</select>`;
-
-            let levelSelect = `<select onchange="sendUpdate(${member.id}, 'level', this.value)">`;
-            for (let lv = 1; lv <= 5; lv++) {
-                const selected = member.level === lv ? 'selected' : '';
-                levelSelect += `<option value="${lv}" ${selected}>${levelMap[lv]}</option>`;
-            }
-            levelSelect += `</select>`;
-
-            const deleteBtn = `<button class="btn-delete" onclick="deleteMember(${member.id}, '${member.name}')">削除</button>`;
-
-            html += `
+        membersDB.forEach(m => {
+            const genderClass = m.gender === 'M' ? 'select-M' : 'select-F';
+            tbody.insertAdjacentHTML('beforeend', `
                 <tr>
-                    <td><input type="checkbox" class="attendance-check" value="${member.id}" ${checked} onchange="toggleActive(${member.id}, this.checked)"></td>
-                    <td>${member.id}</td>
-                    <td>${nameInput}</td>
-                    <td>${kanaInput}</td>
-                    <td>${genderSelect}</td>
-                    <td>${genSelect}</td>
-                    <td>${levelSelect}</td>
-                    <td><span class="rank-badge ${rankClass}">${member.level}</span></td>
-                    <td>${deleteBtn}</td>
+                    <td><input type="checkbox" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
+                    <td>${m.id}</td>
+                    <td><input type="text" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
+                    <td><input type="text" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
+                    <td>
+                        <select class="${genderClass}" onchange="sendUpdate(${m.id}, 'gender', this.value)">
+                            <option value="M" ${m.gender==='M'?'selected':''}>男性</option>
+                            <option value="F" ${m.gender==='F'?'selected':''}>女性</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="sendUpdate(${m.id}, 'gen', this.value)">
+                            ${["ｼﾞｭﾆｱ","ﾔﾝｸﾞ","ｱﾀﾞﾙﾄ","ｼﾆｱ"].map(g=>`<option value="${g}" ${m.gen===g?'selected':''}>${g}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="sendUpdate(${m.id}, 'level', this.value)">
+                            ${[1,2,3,4,5].map(l=>`<option value="${l}" ${m.level===l?'selected':''}>${levelMap[l]}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td><span class="rank-badge rank-${m.level}">${m.level}</span></td>
+                    <td><button onclick="deleteMember(${m.id},'${m.name}')" style="background:none;box-shadow:none;color:#ccc">×</button></td>
                 </tr>
-            `;
+            `);
         });
-        tableBody.innerHTML = html;
-        updateCount();
-    }
-
-    function toggleActive(id, isChecked) {
-        sendUpdate(id, 'active', isChecked);
-        updateCount();
-    }
-    function updateCount() {
         document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
     }
+
+    async function sendUpdate(id, field, value) {
+        const m = membersDB.find(x => x.id === id);
+        if(m) {
+            m[field] = value;
+            if(field === 'level') m.type = levelMap[value];
+        }
+        if(field !== 'name' && field !== 'kana') renderTable();
+        fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
+    }
+
+    async function addMember() {
+        if(!confirm("追加する？")) return;
+        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) });
+        loadData();
+    }
+
+    async function deleteMember(id, name) {
+        if(!confirm(name + "さんを消す？")) return;
+        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) });
+        loadData();
+    }
+
+    function sortBy(key) {
+        currentSort.order *= (currentSort.key === key) ? -1 : 1;
+        currentSort.key = key;
+        renderTable();
+    }
+
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -372,52 +283,54 @@
         }
         return array;
     }
+
     function generateTeams() {
         let participants = membersDB.filter(m => m.active);
-        if (participants.length < 3) { alert("最低3名の参加者を選択してください。"); return; }
+        if (participants.length < 3) return alert("3人以上選んでね！");
+
+        // 初期ロジック: 練度ごとに分けてシャッフルし、蛇行型（S字）で配分
         let groups = {1:[], 2:[], 3:[], 4:[], 5:[], 'other':[]};
         participants.forEach(p => {
             if (groups[p.level]) groups[p.level].push(p);
             else groups['other'].push(p);
         });
+
         let sortedParticipants = [];
         [1, 2, 3, 4, 5, 'other'].forEach(lvl => {
             sortedParticipants = sortedParticipants.concat(shuffleArray([...groups[lvl]]));
         });
+
         const preferredSize = parseInt(document.querySelector('input[name="teamSize"]:checked').value);
-        let numTeams = preferredSize === 4 ? Math.ceil(sortedParticipants.length / 4) : Math.ceil(sortedParticipants.length / 3);
+        let numTeams = Math.ceil(sortedParticipants.length / preferredSize);
         if (sortedParticipants.length / numTeams < 3) numTeams = Math.floor(sortedParticipants.length / 3);
         if (numTeams < 1) numTeams = 1;
+
         let teams = Array.from({ length: numTeams }, () => []);
         sortedParticipants.forEach((player, index) => {
             const cycle = Math.floor(index / numTeams);
             const teamIndex = (cycle % 2 === 0) ? index % numTeams : (numTeams - 1) - (index % numTeams);
             teams[teamIndex].push(player);
         });
-        const resultArea = document.getElementById('result-area');
-        resultArea.style.opacity = '0.5';
-        setTimeout(() => {
-            resultArea.innerHTML = '';
-            teams.forEach((team, i) => {
-                const avgLevel = (team.reduce((sum, p) => sum + p.level, 0) / team.length).toFixed(1);
-                const maleCount = team.filter(p => p.gender === 'M').length;
-                const femaleCount = team.filter(p => p.gender === 'F').length;
-                let membersHtml = '';
-                team.forEach(p => {
-                    membersHtml += `<div class="member-item">
-                        <span>${p.name} <span style="font-size:0.8em">(${p.gen})</span></span>
-                        <span><span class="rank-badge rank-${p.level}">${p.level}</span></span>
-                    </div>`;
-                });
-                // ▼ 統計表示を「男性」「女性」に変更
-                resultArea.innerHTML += `<div class="team-card">
-                    <div class="team-title">チーム ${String.fromCharCode(65 + i)}</div>
-                    <div class="team-stats">平均ランク: <b>${avgLevel}</b> / 男性:${maleCount} 女性:${femaleCount}</div>
-                    ${membersHtml}
-                </div>`;
-            });
-            resultArea.style.opacity = '1';
-        }, 150);
+
+        const area = document.getElementById('result-area');
+        area.innerHTML = '';
+        teams.forEach((t, i) => {
+            const avg = (t.reduce((sum, p) => sum + p.level, 0) / t.length).toFixed(1);
+            const m = t.filter(x => x.gender === 'M').length;
+            const f = t.filter(x => x.gender === 'F').length;
+            area.innerHTML += `
+                <div class="team-card">
+                    <div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
+                    <div style="font-size:0.8rem;text-align:center;color:#999;margin-bottom:10px;">
+                        平均R:${avg} / 男性:${m} 女性:${f}
+                    </div>
+                    ${t.map(p => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dotted #eee;">
+                        <span>${p.name} <small>(${p.gen})</small></span>
+                        <span class="rank-badge rank-${p.level}">${p.level}</span>
+                    </div>`).join('')}
+                </div>
+            `;
+        });
     }
 </script>
 </body>
