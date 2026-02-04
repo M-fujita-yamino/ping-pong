@@ -62,15 +62,15 @@
             overflow-x: auto; border: 3px solid #eee; margin: 20px 0;
         }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 900px; }
-        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; cursor: pointer; user-select: none; }
+        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; cursor: pointer; user-select: none; position: relative; }
         th:hover { background-color: #89c4f4; }
         td { padding: 10px; border-bottom: 1px solid #f0f0f0; text-align: center; }
 
-        .col-check { width: 45px; } .col-id { width: 45px; } .col-name { width: 160px; }
+        .col-check { width: 55px; } .col-id { width: 45px; } .col-name { width: 160px; }
         .col-kana { width: 160px; } .col-gender { width: 90px; } .col-gen { width: 100px; }
         .col-level { width: 110px; } .col-rank { width: 45px; } .col-del { width: 60px; }
 
-        input[type="text"], input[type="password"], select {
+        input[type="text"], select {
             width: 95%; padding: 8px; border: 2px solid #f0f0f0;
             border-radius: 12px; font-family: inherit; box-sizing: border-box;
         }
@@ -93,11 +93,12 @@
         .rank-3 { background: #fdcb6e; color: #333; } .rank-4 { background: #0984e3; }
         .rank-5 { background: #00b894; }
 
+        .sort-icon { font-size: 0.7em; margin-left: 3px; opacity: 0.8; }
+
         #result-area { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px; }
         .team-card { background: #fff; border: 4px solid var(--soft-green); border-radius: 35px; width: 260px; padding: 20px; }
         .team-title { font-size: 1.4rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 10px; }
 
-        /* 設定パネル用 */
         .settings-panel {
             background: #fff; padding: 20px; border-radius: 30px; border: 2px solid #eee; margin-top: 40px;
         }
@@ -134,13 +135,13 @@
             <table>
                 <thead>
                     <tr>
-                        <th class="col-check no-sort">参加</th>
-                        <th class="col-id" onclick="sortBy('id')">No</th>
-                        <th class="col-name" onclick="sortBy('name')">氏名</th>
-                        <th class="col-kana" onclick="sortBy('kana')">フリガナ</th>
-                        <th class="col-gender" onclick="sortBy('gender')">性別</th>
-                        <th class="col-gen" onclick="sortBy('gen')">世代</th>
-                        <th class="col-level" onclick="sortBy('level')">練度</th>
+                        <th class="col-check" onclick="sortBy('active')">参加 <span id="sort-active" class="sort-icon"></span></th>
+                        <th class="col-id" onclick="sortBy('id')">No <span id="sort-id" class="sort-icon"></span></th>
+                        <th class="col-name" onclick="sortBy('name')">氏名 <span id="sort-name" class="sort-icon"></span></th>
+                        <th class="col-kana" onclick="sortBy('kana')">フリガナ <span id="sort-kana" class="sort-icon"></span></th>
+                        <th class="col-gender" onclick="sortBy('gender')">性別 <span id="sort-gender" class="sort-icon"></span></th>
+                        <th class="col-gen" onclick="sortBy('gen')">世代 <span id="sort-gen" class="sort-icon"></span></th>
+                        <th class="col-level" onclick="sortBy('level')">練度 <span id="sort-level" class="sort-icon"></span></th>
                         <th class="col-rank no-sort">R</th>
                         <th class="col-del no-sort">削除</th>
                     </tr>
@@ -164,15 +165,15 @@
         <div class="settings-panel">
             <div style="margin-bottom:15px;">
                 <label style="cursor:pointer; font-weight:bold;">
-                    <input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 起動時のパスワード認証をスキップする（しない場合はオフ）
+                    <input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 起動時のパスワード認証をスキップする
                 </label>
             </div>
             <div>
                 <label style="font-weight:bold;">合言葉の変更:</label>
                 <input type="text" id="pass-setting" style="width:200px; margin-left:10px;" placeholder="新しい合言葉" onchange="saveSystemSettings()">
-                <small style="display:block; color:#888; margin-top:5px;">※変更後、次回入室時から有効になります。現在の合言葉: <span id="current-pass-label"></span></small>
+                <small style="display:block; color:#888; margin-top:5px;">※現在の合言葉: <span id="current-pass-label"></span></small>
             </div>
-            <button class="btn-bulk" style="margin-top:15px;" onclick="localStorage.removeItem('tabletennis_auth'); location.reload();">ログアウト（再認証テスト）</button>
+            <button class="btn-bulk" style="margin-top:15px;" onclick="localStorage.removeItem('tabletennis_auth'); location.reload();">ログアウト</button>
         </div>
     </div>
 </div>
@@ -180,7 +181,6 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
     
-    // 設定の初期化
     let config = {
         pass: localStorage.getItem("iketaku_pass") || "iketaku",
         skip: localStorage.getItem("iketaku_skip") === "true"
@@ -195,10 +195,7 @@
         document.getElementById('current-pass-label').textContent = config.pass;
         document.getElementById('skip-auth-check').checked = config.skip;
 
-        // 認証スキップがONならそのまま表示
-        if(config.skip) {
-            showApp();
-        } else if(localStorage.getItem("tabletennis_auth") === config.pass) {
+        if(config.skip || localStorage.getItem("tabletennis_auth") === config.pass) {
             showApp();
         }
     };
@@ -216,10 +213,8 @@
     function saveSystemSettings() {
         const newPass = document.getElementById('pass-setting').value || "iketaku";
         const newSkip = document.getElementById('skip-auth-check').checked;
-        
         localStorage.setItem("iketaku_pass", newPass);
         localStorage.setItem("iketaku_skip", newSkip);
-        
         config.pass = newPass;
         config.skip = newSkip;
         document.getElementById('current-pass-label').textContent = newPass;
@@ -241,15 +236,38 @@
     }
 
     function sortBy(key) {
-        currentSort.order = (currentSort.key === key) ? currentSort.order * -1 : 1;
-        currentSort.key = key;
+        if (currentSort.key === key) {
+            currentSort.order *= -1;
+        } else {
+            currentSort.key = key;
+            currentSort.order = 1;
+        }
         renderTable();
     }
 
     function renderTable() {
         const tbody = document.getElementById('member-list');
         tbody.innerHTML = '';
-        membersDB.sort((a, b) => (a[currentSort.key] > b[currentSort.key] ? 1 : -1) * currentSort.order);
+        
+        // 並び替え処理（チェックボックスのブール値も対応）
+        membersDB.sort((a, b) => {
+            let valA = a[currentSort.key];
+            let valB = b[currentSort.key];
+            if (typeof valA === 'boolean') {
+                return (valA === valB) ? 0 : (valA ? -1 : 1) * currentSort.order;
+            }
+            if (typeof valA === 'string') {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+                return (valA < valB ? -1 : 1) * currentSort.order;
+            }
+            return (valA - valB) * currentSort.order;
+        });
+
+        // ソートアイコン更新
+        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
+        const targetIcon = document.getElementById('sort-' + currentSort.key);
+        if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
 
         membersDB.forEach(m => {
             const genderClass = m.gender === 'M' ? 'select-M' : 'select-F';
@@ -302,7 +320,7 @@
             m[field] = value;
             if(field === 'level') m.type = levelMap[value];
         }
-        if(field !== 'name' && field !== 'kana') renderTable();
+        if(field !== 'name' && field !== 'kana' && field !== 'active') renderTable();
         else updateCount();
         fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
     }
