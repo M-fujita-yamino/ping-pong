@@ -13,9 +13,8 @@
         #pass-input { padding: 10px; font-size: 16px; width: 80%; margin-bottom: 15px; text-align: center; letter-spacing: 2px; }
 
         /* メイン画面設定 (レスポンシブ対応) */
-        #main-app { display: none; padding: 10px; } /* スマホ用にパディング微減 */
+        #main-app { display: none; padding: 10px; } 
         
-        /* コンテナ：画面幅いっぱいまで使うが、広すぎるときは1400pxで止める */
         .container { 
             width: 95%; 
             max-width: 1400px; 
@@ -34,7 +33,7 @@
 
         /* テーブル設定 */
         .table-wrapper { 
-            max-height: 60vh; /* 画面の高さの60%まで */
+            max-height: 60vh; 
             overflow-y: auto; 
             border: 1px solid #ddd; 
             margin-bottom: 20px; 
@@ -43,13 +42,12 @@
         table { 
             width: 100%; 
             border-collapse: collapse; 
-            table-layout: fixed; /* 重要: 列幅のバランスをCSSで強制制御する */
-            min-width: 900px; /* スマホではこれより小さくせず横スクロールさせる */
+            table-layout: fixed; 
+            min-width: 900px; 
         }
         
-        /* ヘッダー・セルの共通設定 */
         th, td { 
-            padding: 8px 4px; /* 横の余白を少し詰める */
+            padding: 8px 4px; 
             border-bottom: 1px solid #ddd; 
             text-align: center; 
             vertical-align: middle; 
@@ -64,44 +62,39 @@
             z-index: 10; 
             cursor: pointer; 
             user-select: none;
-            white-space: nowrap; /* ヘッダーの文字は折り返さない */
+            white-space: nowrap; 
         }
         th:hover { background-color: #004494; }
         th.no-sort { cursor: default; }
         th.no-sort:hover { background-color: #0056b3; }
         tr:hover { background-color: #f9f9f9; }
 
-        /* ▼ 列幅の黄金比率設定 (合計100%になるように配分) ▼ */
-        /* PC/タブレットで横幅を有効活用するための設定です */
+        /* 列幅の設定 */
         th.col-check { width: 4%; }
         th.col-id    { width: 5%; }
-        th.col-name  { width: 18%; } /* 氏名を広く */
-        th.col-kana  { width: 18%; } /* フリガナも広く */
-        th.col-gender{ width: 8%; }
+        th.col-name  { width: 18%; } 
+        th.col-kana  { width: 18%; } 
+        th.col-gender{ width: 10%; } /* 少し幅を広げました */
         th.col-gen   { width: 12%; }
         th.col-level { width: 15%; }
         th.col-rank  { width: 5%; }
         th.col-del   { width: 8%; }
 
-        /* 入力フォームをセルいっぱいに広げる設定 */
         input[type="text"], select { 
-            width: 95%; /* セルの幅に合わせて伸縮 */
+            width: 95%; 
             padding: 6px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
             font-size: 14px; 
-            box-sizing: border-box; /* パディングを含めてサイズ計算 */
+            box-sizing: border-box; 
         }
         
-        /* スマホ向けの微調整 */
         @media (max-width: 768px) {
             .container { width: 100%; padding: 5px; }
             h1 { font-size: 1.2rem; }
-            /* スマホでは入力しにくいので文字サイズを少し大きく */
             input[type="text"], select { font-size: 16px; padding: 8px; }
         }
 
-        /* その他パーツ */
         .select-M { color: blue; font-weight: bold; }
         .select-F { color: #d63384; font-weight: bold; }
 
@@ -182,11 +175,8 @@
 </div>
 
 <script>
-    // ==========================================
-    // ▼ 設定エリア ▼
-    const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";   // GASのURL
-    const CORRECT_PASS = "iketaku";           // 合言葉
-    // ==========================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
+    const CORRECT_PASS = "iketaku";
 
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
@@ -214,7 +204,6 @@
     }
 
     async function loadData() {
-        if(API_URL.includes("YOUR_GAS_URL")) return;
         try {
             statusMsg.textContent = "データ取得中...";
             statusMsg.className = "status-bar status-loading";
@@ -325,14 +314,14 @@
         membersDB.forEach(member => {
             const checked = member.active ? 'checked' : '';
             const rankClass = `rank-${member.level}`;
-            // 幅指定を削除し、CSSクラスに任せる
             const nameInput = `<input type="text" value="${member.name}" onchange="sendUpdate(${member.id}, 'name', this.value)">`;
             const kanaInput = `<input type="text" value="${member.kana || ''}" onchange="sendUpdate(${member.id}, 'kana', this.value)">`;
             
             const genderClass = member.gender === 'M' ? 'select-M' : 'select-F';
+            // ▼ 性別表記を「男性」「女性」に変更
             let genderSelect = `<select class="${genderClass}" onchange="sendUpdate(${member.id}, 'gender', this.value)">
-                <option value="M" ${member.gender === 'M' ? 'selected' : ''}>男</option>
-                <option value="F" ${member.gender === 'F' ? 'selected' : ''}>女</option>
+                <option value="M" ${member.gender === 'M' ? 'selected' : ''}>男性</option>
+                <option value="F" ${member.gender === 'F' ? 'selected' : ''}>女性</option>
             </select>`;
 
             let genSelect = `<select onchange="sendUpdate(${member.id}, 'gen', this.value)">`;
@@ -420,9 +409,10 @@
                         <span><span class="rank-badge rank-${p.level}">${p.level}</span></span>
                     </div>`;
                 });
+                // ▼ 統計表示を「男性」「女性」に変更
                 resultArea.innerHTML += `<div class="team-card">
                     <div class="team-title">チーム ${String.fromCharCode(65 + i)}</div>
-                    <div class="team-stats">平均ランク: <b>${avgLevel}</b> / 男:${maleCount} 女:${femaleCount}</div>
+                    <div class="team-stats">平均ランク: <b>${avgLevel}</b> / 男性:${maleCount} 女性:${femaleCount}</div>
                     ${membersHtml}
                 </div>`;
             });
