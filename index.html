@@ -31,8 +31,7 @@
         }
         #login-box {
             background: white; padding: 40px; border-radius: 40px;
-            text-align: center; border: 6px solid var(--ikeda-orange);
-            width: 320px;
+            text-align: center; border: 6px solid var(--ikeda-orange); width: 320px;
         }
         #pass-input {
             padding: 12px; font-size: 1.2rem; width: 80%;
@@ -43,65 +42,86 @@
         #main-app { display: none; padding: 20px; }
         .container {
             max-width: 1200px; margin: 0 auto;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 30px; border-radius: 50px;
             border: 5px solid var(--primary-blue);
             box-shadow: 0 15px 30px rgba(0,0,0,0.05);
         }
 
-        h1 { text-align: center; font-size: 3rem; color: #ff6f61; margin: 0 0 20px 0; }
+        h1 { text-align: center; font-size: 2.8rem; color: #ff6f61; margin: 0 0 15px 0; }
 
         .section-title {
             background: var(--soft-green); display: inline-block;
             padding: 5px 25px; border-radius: 30px;
-            font-size: 1.5rem; margin-top: 30px; border: 2px solid #98fb98;
+            font-size: 1.4rem; margin-top: 25px; border: 2px solid #98fb98;
         }
+
+        .status-indicator {
+            font-weight: bold; font-size: 0.9rem; padding: 5px 15px;
+            border-radius: 15px; transition: 0.3s; margin-left: 15px;
+            display: inline-block; min-width: 120px; text-align: center;
+        }
+        .status-idle { background: #eee; color: #999; }
+        .status-loading { background: #fff3cd; color: #856404; animation: blink 1s infinite; }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        @keyframes blink { 50% { opacity: 0.6; } }
 
         .table-wrapper {
             background: white; border-radius: 30px;
-            overflow-x: auto; border: 3px solid #eee; margin: 20px 0;
+            overflow-x: auto; border: 3px solid #eee; margin: 15px 0;
         }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 900px; }
-        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.9rem; cursor: pointer; user-select: none; position: relative; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1000px; }
+        th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.85rem; cursor: pointer; user-select: none; }
         th:hover { background-color: #89c4f4; }
-        td { padding: 10px; border-bottom: 1px solid #f0f0f0; text-align: center; }
+        td { padding: 8px; border-bottom: 1px solid #f0f0f0; text-align: center; }
 
-        .col-check { width: 55px; } .col-id { width: 45px; } .col-name { width: 160px; }
-        .col-kana { width: 160px; } .col-gender { width: 90px; } .col-gen { width: 100px; }
-        .col-level { width: 110px; } .col-rank { width: 45px; } .col-del { width: 60px; }
+        .col-check { width: 50px; } .col-id { width: 45px; } .col-name { width: 150px; }
+        .col-kana { width: 150px; } .col-gender { width: 85px; } .col-gen { width: 130px; }
+        .col-level { width: 140px; } .col-rank { width: 45px; } .col-del { width: 50px; }
 
         input[type="text"], select {
-            width: 95%; padding: 8px; border: 2px solid #f0f0f0;
-            border-radius: 12px; font-family: inherit; box-sizing: border-box;
+            width: 95%; padding: 6px; border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 10px; font-family: inherit; font-size: 0.9rem;
         }
+
+        .bg-male { background-color: #e3f2fd !important; }
+        .bg-female { background-color: #fce4ec !important; }
+        
+        .lv-1 { background-color: #fff9c4 !important; } 
+        .lv-2 { background-color: #f5f5f5 !important; } 
+        .lv-3 { background-color: #efebe9 !important; } 
+        .lv-4 { background-color: #e8eaf6 !important; } 
+        .lv-5 { background-color: #fff3e0 !important; } 
+
+        .gen-junior { background-color: #f0f4ff !important; border: 1px solid #c5cae9; } 
+        .gen-young { background-color: #ffebee !important; border: 1px solid #ffcdd2; } 
+        .gen-adult { background-color: #f5f5f5 !important; border: 1px solid #e0e0e0; } 
+        .gen-senior { background-color: #e8f5e9 !important; border: 1px solid #c8e6c9; } 
 
         button {
-            border: none; border-radius: 25px; padding: 10px 25px;
+            border: none; border-radius: 20px; padding: 8px 20px;
             font-family: inherit; font-weight: bold; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.1);
         }
-        button:active { transform: translateY(3px); box-shadow: none; }
-        
+        button:active { transform: translateY(2px); box-shadow: none; }
         .btn-add { background: var(--soft-pink); color: #d64545; }
-        .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.2rem; }
-        .btn-bulk { background: #eee; color: #666; padding: 5px 15px; font-size: 0.8rem; }
+        .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.1rem; }
+        .btn-bulk { background: #f0f0f0; color: #666; padding: 4px 12px; font-size: 0.75rem; }
 
-        .select-M { color: #4169e1; font-weight: bold; }
-        .select-F { color: #ff69b4; font-weight: bold; }
-        .rank-badge { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 0.8rem; color: white; background: #ccc; }
-        .rank-1 { background: #d63031; } .rank-2 { background: #e17055; }
-        .rank-3 { background: #fdcb6e; color: #333; } .rank-4 { background: #0984e3; }
-        .rank-5 { background: #00b894; }
+        .rank-badge { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 0.75rem; color: white; font-weight: bold; }
+        .rank-1 { background: #d4af37; } .rank-2 { background: #c0c0c0; }
+        .rank-3 { background: #cd7f32; } .rank-4 { background: #1a237e; }
+        .rank-5 { background: #ef6c00; }
 
         .sort-icon { font-size: 0.7em; margin-left: 3px; opacity: 0.8; }
+        #result-area { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 25px; }
+        .team-card { background: #fff; border: 3px solid var(--soft-green); border-radius: 30px; width: 260px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .team-title { font-size: 1.3rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 8px; }
 
-        #result-area { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px; }
-        .team-card { background: #fff; border: 4px solid var(--soft-green); border-radius: 35px; width: 260px; padding: 20px; }
-        .team-title { font-size: 1.4rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 10px; }
-
-        .settings-panel {
-            background: #fff; padding: 20px; border-radius: 30px; border: 2px solid #eee; margin-top: 40px;
-        }
+        .settings-panel { background: #fff; padding: 20px; border-radius: 25px; border: 1px solid #eee; margin-top: 30px; font-size: 0.85rem; }
+        
+        .illus-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
     </style>
 </head>
 <body>
@@ -121,14 +141,18 @@
     <div class="container">
         <h1>池田ジュニア卓球 🐨🏯🍜</h1>
 
-        <div class="section-title">メンバー一覧</div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+        <div style="display:flex; align-items:center;">
+            <div class="section-title">メンバー一覧</div>
+            <div id="status-indicator" class="status-indicator status-idle">待機中</div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
             <div>
-                <button class="btn-add" onclick="addMember()">＋ 新しく追加する</button>
-                <button class="btn-bulk" style="margin-left:10px;" onclick="bulkCheck(true)">全員 参加</button>
+                <button class="btn-add" onclick="addMember()">＋ 追加</button>
+                <button class="btn-bulk" style="margin-left:8px;" onclick="bulkCheck(true)">全員 参加</button>
                 <button class="btn-bulk" onclick="bulkCheck(false)">全員 不参加</button>
             </div>
-            <div style="font-weight:bold;">参加予定: <span id="selected-count">0</span> 名</div>
+            <div style="font-weight:bold; font-size:0.9rem;">参加予定: <span id="selected-count">0</span> 名</div>
         </div>
 
         <div class="table-wrapper">
@@ -151,8 +175,8 @@
         </div>
 
         <div class="section-title">チーム分け機能</div>
-        <div style="text-align:center; margin-top:20px; background:rgba(255,255,255,0.7); padding:25px; border-radius:30px;">
-            <div style="margin-bottom:20px;">
+        <div style="text-align:center; margin-top:15px; background:rgba(255,255,255,0.7); padding:20px; border-radius:30px; border:1px solid #eee;">
+            <div style="margin-bottom:15px;">
                 <label><input type="radio" name="teamSize" value="4" checked> 4人チーム優先</label>
                 <label style="margin-left:20px;"><input type="radio" name="teamSize" value="3"> 3人チーム優先</label>
             </div>
@@ -163,47 +187,50 @@
 
         <div class="section-title">システム設定</div>
         <div class="settings-panel">
-            <div style="margin-bottom:15px;">
-                <label style="cursor:pointer; font-weight:bold;">
-                    <input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 起動時のパスワード認証をスキップする
-                </label>
-            </div>
-            <div>
-                <label style="font-weight:bold;">合言葉の変更:</label>
-                <input type="text" id="pass-setting" style="width:200px; margin-left:10px;" placeholder="新しい合言葉" onchange="saveSystemSettings()">
-                <small style="display:block; color:#888; margin-top:5px;">※現在の合言葉: <span id="current-pass-label"></span></small>
-            </div>
-            <button class="btn-bulk" style="margin-top:15px;" onclick="localStorage.removeItem('tabletennis_auth'); location.reload();">ログアウト</button>
+            <label style="cursor:pointer;"><input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 認証スキップ</label>
+            <span style="margin-left:20px;">合言葉: <input type="text" id="pass-setting" style="width:120px;" onchange="saveSystemSettings()"></span>
+            <button class="btn-bulk" style="margin-left:20px;" onclick="localStorage.removeItem('tabletennis_auth'); location.reload();">ログアウト</button>
         </div>
     </div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
-    
-    let config = {
-        pass: localStorage.getItem("iketaku_pass") || "iketaku",
-        skip: localStorage.getItem("iketaku_skip") === "true"
-    };
-
+    let config = { pass: localStorage.getItem("iketaku_pass") || "iketaku", skip: localStorage.getItem("iketaku_skip") === "true" };
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
-    const levelMap = { 1: "師範", 2: "ｺｰﾁ", 3: "ﾍﾞﾃﾗﾝ", 4: "ﾚｷﾞｭﾗｰ", 5: "ﾋﾞｷﾞﾅｰ" };
+    
+    const levelData = {
+        1: { name: "師範", icon: "🥇", class: "lv-1" },
+        2: { name: "ｺｰﾁ", icon: "🥈", class: "lv-2" },
+        3: { name: "ﾍﾞﾃﾗﾝ", icon: "🥉", class: "lv-3" },
+        4: { name: "ﾚｷﾞｭﾗｰ", icon: "🥋", class: "lv-4" },
+        5: { name: "ﾋﾞｷﾞﾅｰ", icon: "⚪", class: "lv-5" }
+    };
+
+    const genIcons = {
+        "ｼﾞｭﾆｱ": { M: "🐣", F: "🐥", class: "gen-junior" },
+        "ﾔﾝｸﾞ": { M: "⚡", F: "✨", class: "gen-young" },
+        "ｱﾀﾞﾙﾄ": { M: "👔", F: "💄", class: "gen-adult" },
+        "ｼﾆｱ": { M: "🍵", F: "🌸", class: "gen-senior" }
+    };
+
+    function updateStatus(type, text) {
+        const el = document.getElementById('status-indicator');
+        el.className = `status-indicator status-${type}`;
+        el.textContent = text;
+        if(type === 'success') setTimeout(() => updateStatus('idle', '待機中'), 2000);
+    }
 
     window.onload = function() {
         document.getElementById('pass-setting').value = config.pass;
-        document.getElementById('current-pass-label').textContent = config.pass;
         document.getElementById('skip-auth-check').checked = config.skip;
-
-        if(config.skip || localStorage.getItem("tabletennis_auth") === config.pass) {
-            showApp();
-        }
+        if(config.skip || localStorage.getItem("tabletennis_auth") === config.pass) showApp();
     };
 
     function checkPass() {
-        const input = document.getElementById('pass-input').value;
-        if(input === config.pass) {
-            localStorage.setItem("tabletennis_auth", input);
+        if(document.getElementById('pass-input').value === config.pass) {
+            localStorage.setItem("tabletennis_auth", config.pass);
             showApp();
         } else {
             document.getElementById('login-msg').textContent = "合言葉が違うみたい...";
@@ -211,13 +238,10 @@
     }
 
     function saveSystemSettings() {
-        const newPass = document.getElementById('pass-setting').value || "iketaku";
-        const newSkip = document.getElementById('skip-auth-check').checked;
-        localStorage.setItem("iketaku_pass", newPass);
-        localStorage.setItem("iketaku_skip", newSkip);
-        config.pass = newPass;
-        config.skip = newSkip;
-        document.getElementById('current-pass-label').textContent = newPass;
+        config.pass = document.getElementById('pass-setting').value || "iketaku";
+        config.skip = document.getElementById('skip-auth-check').checked;
+        localStorage.setItem("iketaku_pass", config.pass);
+        localStorage.setItem("iketaku_skip", config.skip);
         alert("設定を保存しました。");
     }
 
@@ -228,111 +252,102 @@
     }
 
     async function loadData() {
+        updateStatus('loading', 'DB接続中...');
         try {
             const res = await fetch(API_URL);
             membersDB = await res.json();
             renderTable();
-        } catch (e) { console.error("Load Error"); }
+            updateStatus('success', '読込完了');
+        } catch (e) { updateStatus('error', '通信エラー'); }
     }
 
     function sortBy(key) {
-        if (currentSort.key === key) {
-            currentSort.order *= -1;
-        } else {
-            currentSort.key = key;
-            currentSort.order = 1;
-        }
+        currentSort.order = (currentSort.key === key) ? currentSort.order * -1 : 1;
+        currentSort.key = key;
         renderTable();
     }
 
     function renderTable() {
         const tbody = document.getElementById('member-list');
         tbody.innerHTML = '';
-        
-        // 並び替え処理（チェックボックスのブール値も対応）
         membersDB.sort((a, b) => {
-            let valA = a[currentSort.key];
-            let valB = b[currentSort.key];
-            if (typeof valA === 'boolean') {
-                return (valA === valB) ? 0 : (valA ? -1 : 1) * currentSort.order;
-            }
-            if (typeof valA === 'string') {
-                valA = valA.toLowerCase();
-                valB = valB.toLowerCase();
-                return (valA < valB ? -1 : 1) * currentSort.order;
-            }
-            return (valA - valB) * currentSort.order;
+            let vA = a[currentSort.key], vB = b[currentSort.key];
+            if (typeof vA === 'boolean') return (vA === vB) ? 0 : (vA ? -1 : 1) * currentSort.order;
+            return (vA < vB ? -1 : 1) * currentSort.order;
         });
 
-        // ソートアイコン更新
         document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
         const targetIcon = document.getElementById('sort-' + currentSort.key);
         if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
 
         membersDB.forEach(m => {
-            const genderClass = m.gender === 'M' ? 'select-M' : 'select-F';
+            const genderClass = m.gender === 'M' ? 'bg-male' : 'bg-female';
+            const genObj = genIcons[m.gen] || { M:"❓", F:"❓", class:"" };
+            const genIcon = m.gender === 'M' ? genObj.M : genObj.F;
+            const lvObj = levelData[m.level] || { name:"", icon:"", class:"" };
+            
             tbody.insertAdjacentHTML('beforeend', `
                 <tr>
                     <td><input type="checkbox" class="active-check" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
                     <td>${m.id}</td>
-                    <td><input type="text" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
-                    <td><input type="text" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
-                    <td>
-                        <select class="${genderClass}" onchange="sendUpdate(${m.id}, 'gender', this.value)">
-                            <option value="M" ${m.gender==='M'?'selected':''}>男性</option>
-                            <option value="F" ${m.gender==='F'?'selected':''}>女性</option>
+                    <td><input type="text" class="${genderClass}" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
+                    <td><input type="text" class="${genderClass}" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
+                    <td><select class="${m.gender==='M'?'select-M':'select-F'}" onchange="sendUpdate(${m.id}, 'gender', this.value)">
+                        <option value="M" ${m.gender==='M'?'selected':''}>男性</option>
+                        <option value="F" ${m.gender==='F'?'selected':''}>女性</option>
+                    </select></td>
+                    <td><div style="display:flex; align-items:center; justify-content:center;">
+                        <span class="illus-icon">${genIcon}</span>
+                        <select class="${genObj.class}" onchange="sendUpdate(${m.id}, 'gen', this.value)" style="width:auto; flex-grow:1;">
+                            ${Object.keys(genIcons).map(g=>`<option value="${g}" ${m.gen===g?'selected':''}>${g}</option>`).join('')}
                         </select>
-                    </td>
-                    <td>
-                        <select onchange="sendUpdate(${m.id}, 'gen', this.value)">
-                            ${["ｼﾞｭﾆｱ","ﾔﾝｸﾞ","ｱﾀﾞﾙﾄ","ｼﾆｱ"].map(g=>`<option value="${g}" ${m.gen===g?'selected':''}>${g}</option>`).join('')}
+                    </div></td>
+                    <td><div style="display:flex; align-items:center; justify-content:center;">
+                        <span class="illus-icon">${lvObj.icon}</span>
+                        <select class="${lvObj.class}" onchange="sendUpdate(${m.id}, 'level', this.value)" style="width:auto; flex-grow:1;">
+                            ${[1,2,3,4,5].map(l=>`<option value="${l}" ${m.level===l?'selected':''}>${levelData[l].name}</option>`).join('')}
                         </select>
-                    </td>
-                    <td>
-                        <select onchange="sendUpdate(${m.id}, 'level', this.value)">
-                            ${[1,2,3,4,5].map(l=>`<option value="${l}" ${m.level===l?'selected':''}>${levelMap[l]}</option>`).join('')}
-                        </select>
-                    </td>
+                    </div></td>
                     <td><span class="rank-badge rank-${m.level}">${m.level}</span></td>
                     <td><button onclick="deleteMember(${m.id},'${m.name}')" style="background:none;box-shadow:none;color:#ccc">×</button></td>
                 </tr>
             `);
         });
-        updateCount();
+        document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
     }
 
-    function updateCount() {
-        document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
+    async function sendUpdate(id, field, value) {
+        updateStatus('loading', '保存中...');
+        const m = membersDB.find(x => x.id === id);
+        if(m) m[field] = value;
+        renderTable();
+        try {
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
+            updateStatus('success', '保存完了');
+        } catch (e) { updateStatus('error', '保存失敗'); }
     }
 
     async function bulkCheck(bool) {
         if(!confirm((bool ? "全員参加" : "全員不参加") + "にしますか？")) return;
+        updateStatus('loading', '一括更新中...');
         membersDB.forEach(m => m.active = bool);
         renderTable();
         for(let m of membersDB) {
             fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
         }
-    }
-
-    async function sendUpdate(id, field, value) {
-        const m = membersDB.find(x => x.id === id);
-        if(m) {
-            m[field] = value;
-            if(field === 'level') m.type = levelMap[value];
-        }
-        if(field !== 'name' && field !== 'kana' && field !== 'active') renderTable();
-        else updateCount();
-        fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
+        updateStatus('success', '更新完了');
     }
 
     async function addMember() {
-        if(!confirm("追加する？")) return;
+        if(!confirm("新規追加しますか？")) return;
+        updateStatus('loading', 'メンバー追加中...');
         await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) });
         loadData();
     }
 
     async function deleteMember(id, name) {
-        if(!confirm(name + "さんを消す？")) return;
+        if(!confirm(name + "さんを削除しますか？")) return;
+        updateStatus('loading', '削除中...');
         await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) });
         loadData();
     }
@@ -346,50 +361,40 @@
     }
 
     function generateTeams() {
-        let participants = membersDB.filter(m => m.active);
-        if (participants.length < 3) return alert("3人以上選んでね！");
-
+        let list = membersDB.filter(m => m.active);
+        if (list.length < 3) return alert("3人以上選んでね！");
         let groups = {1:[], 2:[], 3:[], 4:[], 5:[], 'other':[]};
-        participants.forEach(p => {
-            if (groups[p.level]) groups[p.level].push(p);
-            else groups['other'].push(p);
+        list.forEach(p => { groups[p.level] ? groups[p.level].push(p) : groups['other'].push(p); });
+        let sorted = [];
+        [1, 2, 3, 4, 5, 'other'].forEach(lvl => sorted = sorted.concat(shuffleArray([...groups[lvl]])));
+        const size = parseInt(document.querySelector('input[name="teamSize"]:checked').value);
+        let numTeams = Math.ceil(sorted.length / size);
+        if (sorted.length / numTeams < 3) numTeams = Math.floor(sorted.length / 3);
+        let teams = Array.from({ length: Math.max(1, numTeams) }, () => []);
+        sorted.forEach((p, idx) => {
+            const cycle = Math.floor(idx / teams.length);
+            const tIdx = (cycle % 2 === 0) ? idx % teams.length : (teams.length - 1) - (idx % teams.length);
+            teams[tIdx].push(p);
         });
-
-        let sortedParticipants = [];
-        [1, 2, 3, 4, 5, 'other'].forEach(lvl => {
-            sortedParticipants = sortedParticipants.concat(shuffleArray([...groups[lvl]]));
-        });
-
-        const preferredSize = parseInt(document.querySelector('input[name="teamSize"]:checked').value);
-        let numTeams = Math.ceil(sortedParticipants.length / preferredSize);
-        if (sortedParticipants.length / numTeams < 3) numTeams = Math.floor(sortedParticipants.length / 3);
-        if (numTeams < 1) numTeams = 1;
-
-        let teams = Array.from({ length: numTeams }, () => []);
-        sortedParticipants.forEach((player, index) => {
-            const cycle = Math.floor(index / numTeams);
-            const teamIndex = (cycle % 2 === 0) ? index % numTeams : (numTeams - 1) - (index % numTeams);
-            teams[teamIndex].push(player);
-        });
-
-        const area = document.getElementById('result-area');
-        area.innerHTML = '';
+        const area = document.getElementById('result-area'); area.innerHTML = '';
         teams.forEach((t, i) => {
-            const avg = (t.reduce((sum, p) => sum + p.level, 0) / t.length).toFixed(1);
-            const m = t.filter(x => x.gender === 'M').length;
-            const f = t.filter(x => x.gender === 'F').length;
-            area.innerHTML += `
-                <div class="team-card">
-                    <div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
-                    <div style="font-size:0.8rem;text-align:center;color:#999;margin-bottom:10px;">
-                        平均R:${avg} / 男性:${m} 女性:${f}
-                    </div>
-                    ${t.map(p => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dotted #eee;">
-                        <span>${p.name} <small>(${p.gen})</small></span>
-                        <span class="rank-badge rank-${p.level}">${p.level}</span>
-                    </div>`).join('')}
+            const avg = (t.reduce((s, p) => s + p.level, 0) / t.length).toFixed(1);
+            area.innerHTML += `<div class="team-card">
+                <div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
+                <div style="font-size:0.75rem;text-align:center;color:#999;margin-bottom:8px;">平均R:${avg} / 男:${t.filter(x=>x.gender==='M').length} 女:${t.filter(x=>x.gender==='F').length}</div>
+                <div class="team-members">
+                    ${t.map(p => {
+                        const gObj = genIcons[p.gen] || { M:"❓", F:"❓" };
+                        const gIcon = p.gender === 'M' ? gObj.M : gObj.F;
+                        const lIcon = (levelData[p.level] || {}).icon || "";
+                        return `
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;margin-bottom:3px;border-radius:10px;font-size:0.95rem; ${p.gender==='M' ? 'background-color:#e3f2fd;' : 'background-color:#fce4ec;'}">
+                            <span><span style="margin-right:6px;">${gIcon}</span>${p.name}</span>
+                            <span><span style="margin-right:6px;">${lIcon}</span><span class="rank-badge rank-${p.level}">${p.level}</span></span>
+                        </div>`;
+                    }).join('')}
                 </div>
-            `;
+            </div>`;
         });
     }
 </script>
