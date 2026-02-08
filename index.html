@@ -50,13 +50,9 @@
 
         h1 { text-align: center; font-size: 2.8rem; color: #ff6f61; margin: 0 0 15px 0; }
 
-        /* ホワイトボードのデザイン */
         .whiteboard-area {
-            background: #fff;
-            border: 8px solid #ddd;
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px 0;
+            background: #fff; border: 8px solid #ddd; border-radius: 15px;
+            padding: 15px; margin: 20px 0;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 5px 5px 0 #ccc;
             position: relative;
         }
@@ -149,10 +145,10 @@
     <div id="login-box">
         <h2>池田ジュニア卓球</h2>
         <p>🏓 合言葉を入力してね</p>
-        <input type="password" id="pass-input">
+        <input type="password" id="pass-input" placeholder="ここに入力">
         <br>
         <button class="btn-exec" onclick="checkPass()">入室する</button>
-        <p id="login-msg" style="color:red; min-height:20px;"></p>
+        <p id="login-msg" style="color:red; min-height:20px; margin-top:10px;"></p>
     </div>
 </div>
 
@@ -161,7 +157,7 @@
         <h1>池田ジュニア卓球 🐨🏯🍜</h1>
 
         <div class="whiteboard-area">
-            <textarea id="shared-memo" placeholder="ここに連絡事項などを自由に書けます。入力すると自動で保存されます。" onchange="saveMemo(this.value)"></textarea>
+            <textarea id="shared-memo" placeholder="ホワイトボード：自動保存されます" onchange="saveMemo(this.value)"></textarea>
         </div>
 
         <div style="display:flex; align-items:center;">
@@ -200,8 +196,8 @@
         <div class="section-title">チーム分け機能</div>
         <div style="text-align:center; margin-top:15px; background:rgba(255,255,255,0.7); padding:20px; border-radius:30px; border:1px solid #eee;">
             <div style="margin-bottom:15px;">
-                <label><input type="radio" name="teamSize" value="4" checked> 4人チーム優先</label>
-                <label style="margin-left:20px;"><input type="radio" name="teamSize" value="3"> 3人チーム優先</label>
+                <label><input type="radio" name="teamSize" value="4" checked> 4人ペア優先</label>
+                <label style="margin-left:20px;"><input type="radio" name="teamSize" value="3"> 3人ペア優先</label>
             </div>
             <button class="btn-exec" onclick="generateTeams()">チームを決める！</button>
             <button class="btn-shuffle" style="margin-left:10px;" onclick="generateTeams()">🔄 やりなおす</button>
@@ -212,14 +208,28 @@
         <div class="settings-panel">
             <label style="cursor:pointer;"><input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 認証スキップ</label>
             <span style="margin-left:20px;">合言葉: <input type="text" id="pass-setting" style="width:120px;" onchange="saveSystemSettings()"></span>
-            <button class="btn-bulk" style="margin-left:20px;" onclick="localStorage.removeItem('tabletennis_auth'); location.reload();">ログアウト</button>
+            <button class="btn-bulk" style="margin-left:20px;" onclick="resetConfig();">合言葉を強制リセット</button>
         </div>
     </div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
-    let config = { pass: localStorage.getItem("iketaku_pass") || "iketaku", skip: localStorage.getItem("iketaku_skip") === "true" };
+    
+    // 【最優先】合言葉を強制的に「iketaku」に戻す関数
+    function resetConfig() {
+        localStorage.setItem("iketaku_pass", "iketaku");
+        localStorage.setItem("iketaku_skip", "false");
+        localStorage.removeItem("tabletennis_auth");
+        alert("合言葉を「iketaku」にリセットしました。ページを再読み込みします。");
+        location.reload();
+    }
+
+    let config = { 
+        pass: localStorage.getItem("iketaku_pass") || "iketaku", 
+        skip: localStorage.getItem("iketaku_skip") === "true" 
+    };
+
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
     
@@ -240,6 +250,7 @@
 
     function updateStatus(type, text) {
         const el = document.getElementById('status-indicator');
+        if(!el) return;
         el.className = `status-indicator status-${type}`;
         el.textContent = text;
         if(type === 'success') setTimeout(() => updateStatus('idle', '待機中'), 2000);
@@ -248,12 +259,193 @@
     window.onload = function() {
         document.getElementById('pass-setting').value = config.pass;
         document.getElementById('skip-auth-check').checked = config.skip;
-        if(config.skip || localStorage.getItem("tabletennis_auth") === config.pass) showApp();
+        
+        // ログイン状態またはスキップ設定のチェック
+        if(config.skip || localStorage.getItem("tabletennis_auth") === config.pass) {
+            showApp();
+        }
     };
 
     function checkPass() {
-        if(document.getElementById('pass-input').value === config.pass) {
+        const input = document.getElementById('pass-input').value;
+        if(input === config.pass) {
             localStorage.setItem("tabletennis_auth", config.pass);
             showApp();
         } else {
-            document.getElementById('login-msg').
+            document.getElementById('login-msg').textContent = "合言葉が違います（半角小文字です）";
+        }
+    }
+
+    function saveSystemSettings() {
+        config.pass = document.getElementById('pass-setting').value || "iketaku";
+        config.skip = document.getElementById('skip-auth-check').checked;
+        localStorage.setItem("iketaku_pass", config.pass);
+        localStorage.setItem("iketaku_skip", config.skip);
+        alert("設定を保存しました。");
+    }
+
+    function showApp() {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        loadData();
+    }
+
+    async function loadData() {
+        updateStatus('loading', 'DB接続中...');
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            if(data.memo !== undefined) document.getElementById('shared-memo').value = data.memo;
+            membersDB = data.members || data; 
+            renderTable();
+            updateStatus('success', '読込完了');
+        } catch (e) { updateStatus('error', '通信エラー'); }
+    }
+
+    async function saveMemo(text) {
+        updateStatus('loading', 'メモ保存中...');
+        try {
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update_memo', value: text }) });
+            updateStatus('success', 'メモ保存完了');
+        } catch (e) { updateStatus('error', 'メモ保存失敗'); }
+    }
+
+    function sortBy(key) {
+        currentSort.order = (currentSort.key === key) ? currentSort.order * -1 : 1;
+        currentSort.key = key;
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('member-list');
+        tbody.innerHTML = '';
+        membersDB.sort((a, b) => {
+            let vA = a[currentSort.key], vB = b[currentSort.key];
+            if (typeof vA === 'boolean') return (vA === vB) ? 0 : (vA ? -1 : 1) * currentSort.order;
+            return (vA < vB ? -1 : 1) * currentSort.order;
+        });
+
+        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
+        const targetIcon = document.getElementById('sort-' + currentSort.key);
+        if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
+
+        membersDB.forEach(m => {
+            const genderClass = m.gender === 'M' ? 'bg-male' : 'bg-female';
+            const genObj = genIcons[m.gen] || { M:"❓", F:"❓", class:"" };
+            const genIcon = m.gender === 'M' ? genObj.M : genObj.F;
+            const lvObj = levelData[m.level] || { name:"", icon:"", class:"" };
+            
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td><input type="checkbox" class="active-check" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
+                    <td>${m.id}</td>
+                    <td><input type="text" class="${genderClass}" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
+                    <td><input type="text" class="${genderClass}" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
+                    <td><select class="${m.gender==='M'?'select-M':'select-F'}" onchange="sendUpdate(${m.id}, 'gender', this.value)">
+                        <option value="M" ${m.gender==='M'?'selected':''}>男性</option>
+                        <option value="F" ${m.gender==='F'?'selected':''}>女性</option>
+                    </select></td>
+                    <td><div style="display:flex; align-items:center;">
+                        <span class="illus-icon">${genIcon}</span>
+                        <select class="${genObj.class}" onchange="sendUpdate(${m.id}, 'gen', this.value)">
+                            ${Object.keys(genIcons).map(g=>`<option value="${g}" ${m.gen===g?'selected':''}>${g}</option>`).join('')}
+                        </select>
+                    </div></td>
+                    <td><div style="display:flex; align-items:center;">
+                        <span class="illus-icon">${lvObj.icon}</span>
+                        <select class="${lvObj.class}" onchange="sendUpdate(${m.id}, 'level', this.value)">
+                            ${[1,2,3,4,5].map(l=>`<option value="${l}" ${m.level===l?'selected':''}>${levelData[l].name}</option>`).join('')}
+                        </select>
+                    </div></td>
+                    <td><span class="rank-badge rank-${m.level}">${m.level}</span></td>
+                    <td><button onclick="deleteMember(${m.id},'${m.name}')" style="background:none;box-shadow:none;color:#ccc">×</button></td>
+                </tr>
+            `);
+        });
+        document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
+    }
+
+    async function sendUpdate(id, field, value) {
+        updateStatus('loading', '保存中...');
+        const m = membersDB.find(x => x.id === id);
+        if(m) m[field] = value;
+        renderTable();
+        try {
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
+            updateStatus('success', '保存完了');
+        } catch (e) { updateStatus('error', '保存失敗'); }
+    }
+
+    async function bulkCheck(bool) {
+        if(!confirm((bool ? "全員参加" : "全員不参加") + "にしますか？")) return;
+        updateStatus('loading', '一括更新中...');
+        membersDB.forEach(m => m.active = bool);
+        renderTable();
+        for(let m of membersDB) {
+            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
+        }
+        updateStatus('success', '更新完了');
+    }
+
+    async function addMember() {
+        if(!confirm("新規追加しますか？")) return;
+        updateStatus('loading', '追加中...');
+        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) });
+        loadData();
+    }
+
+    async function deleteMember(id, name) {
+        if(!confirm(name + "さんを削除しますか？")) return;
+        updateStatus('loading', '削除中...');
+        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) });
+        loadData();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateTeams() {
+        let list = membersDB.filter(m => m.active);
+        if (list.length < 3) return alert("3人以上選んでね！");
+        let groups = {1:[], 2:[], 3:[], 4:[], 5:[], 'other':[]};
+        list.forEach(p => { groups[p.level] ? groups[p.level].push(p) : groups['other'].push(p); });
+        let sorted = [];
+        [1, 2, 3, 4, 5, 'other'].forEach(lvl => sorted = sorted.concat(shuffleArray([...groups[lvl]])));
+        const size = parseInt(document.querySelector('input[name="teamSize"]:checked').value);
+        let numTeams = Math.ceil(sorted.length / size);
+        if (sorted.length / numTeams < 3) numTeams = Math.floor(sorted.length / 3);
+        let teams = Array.from({ length: Math.max(1, numTeams) }, () => []);
+        sorted.forEach((p, idx) => {
+            const cycle = Math.floor(idx / teams.length);
+            const tIdx = (cycle % 2 === 0) ? idx % teams.length : (teams.length - 1) - (idx % teams.length);
+            teams[tIdx].push(p);
+        });
+        const area = document.getElementById('result-area'); area.innerHTML = '';
+        teams.forEach((t, i) => {
+            const avg = (t.reduce((s, p) => s + p.level, 0) / t.length).toFixed(1);
+            area.innerHTML += `<div class="team-card">
+                <div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
+                <div style="font-size:0.75rem;text-align:center;color:#999;margin-bottom:8px;">平均R:${avg} / 男:${t.filter(x=>x.gender==='M').length} 女:${t.filter(x=>x.gender==='F').length}</div>
+                <div class="team-members">
+                    ${t.map(p => {
+                        const gObj = genIcons[p.gen] || { M:"❓", F:"❓" };
+                        const gIcon = p.gender === 'M' ? gObj.M : gObj.F;
+                        const lIcon = (levelData[p.level] || {}).icon || "";
+                        return `
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;margin-bottom:3px;border-radius:10px;font-size:0.95rem; ${p.gender==='M' ? 'background-color:#e3f2fd;' : 'background-color:#fce4ec;'}">
+                            <span><span style="margin-right:6px;">${gIcon}</span>${p.name}</span>
+                            <span><span style="margin-right:6px;">${lIcon}</span><span class="rank-badge rank-${p.level}">${p.level}</span></span>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        });
+    }
+</script>
+</body>
+</html>
