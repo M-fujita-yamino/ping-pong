@@ -104,14 +104,8 @@
 </div>
 
 <script>
-    const API_URL = "デプロイを更新しました。
-バージョン 8（2026/02/08 16:30）
-デプロイ ID
-AKfycbwA_rGgxeNPjNjZCvkfW9q9WmTAIN73is_lI_redEpXtjoze1UXMWML3V_9RkdPmIA4
-ウェブアプリ
-URL
-https://script.google.com/macros/s/AKfycbwA_rGgxeNPjNjZCvkfW9q9WmTAIN73is_lI_redEpXtjoze1UXMWML3V_9RkdPmIA4/exec
-";
+    // ★ ここに「新しいデプロイ」で取得した最新のURLを必ず貼ってください ★
+    const API_URL = "https://script.google.com/macros/s/AKfycbwA_rGgxeNPjNjZCvkfW9q9WmTAIN73is_lI_redEpXtjoze1UXMWML3V_9RkdPmIA4/exec"; 
     
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
@@ -130,21 +124,32 @@ https://script.google.com/macros/s/AKfycbwA_rGgxeNPjNjZCvkfW9q9WmTAIN73is_lI_red
     async function saveMemo(text) {
         updateStatus('loading', 'メモ保存中...');
         try {
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update_memo', value: text }) });
+            const response = await fetch(API_URL, { 
+                method: "POST", 
+                body: JSON.stringify({ action: 'update_memo', value: text }) 
+            });
+            if(!response.ok) throw new Error("HTTPエラー");
             updateStatus('success', 'メモ保存完了');
-        } catch (e) { updateStatus('error', '保存失敗'); }
+        } catch (e) { 
+            console.error(e);
+            updateStatus('error', '保存失敗。URLを確認してください'); 
+        }
     }
 
     async function loadData() {
         updateStatus('loading', 'データ読込中...');
         try {
             const res = await fetch(API_URL);
+            if(!res.ok) throw new Error("読込エラー");
             const data = await res.json();
             if(data.memo !== undefined) document.getElementById('shared-memo').value = data.memo;
             membersDB = data.members || []; 
             renderTable();
             updateStatus('success', '読込完了');
-        } catch (e) { updateStatus('error', '通信エラー'); }
+        } catch (e) { 
+            console.error(e);
+            updateStatus('error', '通信エラー。デプロイを確認してください'); 
+        }
     }
 
     function renderTable() {
@@ -184,10 +189,18 @@ https://script.google.com/macros/s/AKfycbwA_rGgxeNPjNjZCvkfW9q9WmTAIN73is_lI_red
     }
 
     function sortBy(key) { currentSort.order *= (currentSort.key === key) ? -1 : 1; currentSort.key = key; renderTable(); }
-
     async function addMember() { if(confirm("追加しますか？")) { await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) }); loadData(); } }
     async function deleteMember(id, name) { if(confirm(name + "さんを削除しますか？")) { await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) }); loadData(); } }
-    
+    async function bulkCheck(bool) {
+        updateStatus('loading', '一括更新中...');
+        for(let m of membersDB) {
+            m.active = bool;
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
+        }
+        renderTable();
+        updateStatus('success', '完了');
+    }
+
     function generateTeams() {
         let list = membersDB.filter(m => m.active).sort(() => Math.random() - 0.5);
         if (list.length < 3) return alert("3人以上選んでね！");
@@ -204,4 +217,3 @@ https://script.google.com/macros/s/AKfycbwA_rGgxeNPjNjZCvkfW9q9WmTAIN73is_lI_red
 </script>
 </body>
 </html>
-
