@@ -7,219 +7,125 @@
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-blue: #a3d9ff;
-            --soft-pink: #ffb3ba;
-            --soft-yellow: #ffffba;
-            --soft-green: #baffc9;
-            --ikeda-orange: #ffcc5c;
-            --text-color: #5a5a5a;
+            --primary-blue: #a3d9ff; --soft-pink: #ffb3ba; --soft-yellow: #ffffba;
+            --soft-green: #baffc9; --ikeda-orange: #ffcc5c; --text-color: #5a5a5a;
         }
-
         body {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            background-color: #f0f9ff;
-            color: var(--text-color);
-            margin: 0; padding: 0;
+            font-family: 'Zen Maru Gothic', sans-serif; background-color: #f0f9ff;
+            color: var(--text-color); margin: 0; padding: 0;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M10 10c5 0 5 5 10 5s5-5 10-5' stroke='%23a3d9ff' fill='none'/%3E%3Ccircle cx='80' cy='20' r='3' fill='%23ffcc5c'/%3E%3C/svg%3E");
             background-attachment: fixed;
         }
-
-        .container {
-            max-width: 1200px; margin: 20px auto;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px; border-radius: 50px;
-            border: 5px solid var(--primary-blue);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-        }
-
+        .container { max-width: 1200px; margin: 20px auto; background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 50px; border: 5px solid var(--primary-blue); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
         h1 { text-align: center; font-size: 2.8rem; color: #ff6f61; margin: 0 0 15px 0; }
+        
+        /* ホワイトボード */
+        .whiteboard-area { background: #fff; border: 8px solid #ddd; border-radius: 15px; padding: 15px; margin: 20px 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 5px 5px 0 #ccc; position: relative; }
+        .whiteboard-area::before { content: "連絡用ホワイトボード 🖊️"; position: absolute; top: -12px; left: 20px; background: #fff; padding: 0 10px; font-weight: bold; color: #888; font-size: 0.9rem; }
+        #shared-memo { width: 100%; height: 120px; border: none; outline: none; font-family: inherit; font-size: 1.1rem; color: #333; background: transparent; resize: vertical; line-height: 1.5; }
 
-        .whiteboard-area {
-            background: #fff; border: 8px solid #ddd; border-radius: 15px;
-            padding: 15px; margin: 20px 0;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 5px 5px 0 #ccc;
-            position: relative;
-        }
-        .whiteboard-area::before {
-            content: "連絡用ホワイトボード 🖊️";
-            position: absolute; top: -12px; left: 20px;
-            background: #fff; padding: 0 10px; font-weight: bold; color: #888; font-size: 0.9rem;
-        }
-        #shared-memo {
-            width: 100%; height: 120px; border: none; outline: none;
-            font-family: inherit; font-size: 1.1rem; color: #333;
-            background: transparent; resize: vertical; line-height: 1.5;
-        }
-
-        .section-title {
-            background: var(--soft-green); display: inline-block;
-            padding: 5px 25px; border-radius: 30px;
-            font-size: 1.4rem; margin-top: 25px; border: 2px solid #98fb98;
-        }
-
-        .status-indicator {
-            font-weight: bold; font-size: 0.9rem; padding: 5px 15px;
-            border-radius: 15px; transition: 0.3s; margin-left: 15px;
-            display: inline-block; min-width: 120px; text-align: center;
-        }
+        .section-title { background: var(--soft-green); display: inline-block; padding: 5px 25px; border-radius: 30px; font-size: 1.4rem; margin-top: 25px; border: 2px solid #98fb98; }
+        .status-indicator { font-weight: bold; font-size: 0.9rem; padding: 5px 15px; border-radius: 15px; transition: 0.3s; margin-left: 15px; display: inline-block; min-width: 120px; text-align: center; }
         .status-idle { background: #eee; color: #999; }
         .status-loading { background: #fff3cd; color: #856404; animation: blink 1s infinite; }
         .status-success { background: #d4edda; color: #155724; }
         .status-error { background: #f8d7da; color: #721c24; }
         @keyframes blink { 50% { opacity: 0.6; } }
 
-        .table-wrapper {
-            background: white; border-radius: 30px;
-            overflow-x: auto; border: 3px solid #eee; margin: 15px 0;
-        }
+        .table-wrapper { background: white; border-radius: 30px; overflow-x: auto; border: 3px solid #eee; margin: 15px 0; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1000px; }
         th { background: var(--primary-blue); color: white; padding: 12px; font-size: 0.85rem; cursor: pointer; user-select: none; }
-        th:hover { background-color: #89c4f4; }
         td { padding: 8px; border-bottom: 1px solid #f0f0f0; text-align: center; }
-
-        .col-check { width: 50px; } .col-id { width: 45px; } .col-name { width: 150px; }
-        .col-kana { width: 150px; } .col-gender { width: 85px; } .col-gen { width: 130px; }
-        .col-level { width: 140px; } .col-rank { width: 45px; } .col-del { width: 50px; }
-
-        input[type="text"], select {
-            width: 95%; padding: 6px; border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 10px; font-family: inherit; font-size: 0.9rem;
-        }
-
-        .bg-male { background-color: #e3f2fd !important; }
-        .bg-female { background-color: #fce4ec !important; }
-        .lv-1 { background-color: #fff9c4 !important; } 
-        .lv-2 { background-color: #f5f5f5 !important; } 
-        .lv-3 { background-color: #efebe9 !important; } 
-        .lv-4 { background-color: #e8eaf6 !important; } 
-        .lv-5 { background-color: #fff3e0 !important; } 
-
-        .gen-junior { background-color: #f0f4ff !important; border: 1px solid #c5cae9; } 
-        .gen-young { background-color: #ffebee !important; border: 1px solid #ffcdd2; } 
-        .gen-adult { background-color: #f5f5f5 !important; border: 1px solid #e0e0e0; } 
-        .gen-senior { background-color: #e8f5e9 !important; border: 1px solid #c8e6c9; } 
-
-        button {
-            border: none; border-radius: 20px; padding: 8px 20px;
-            font-family: inherit; font-weight: bold; cursor: pointer;
-            transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.1);
-        }
-        button:active { transform: translateY(2px); box-shadow: none; }
-        .btn-add { background: var(--soft-pink); color: #d64545; }
-        .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.1rem; }
-        .btn-bulk { background: #f0f0f0; color: #666; padding: 4px 12px; font-size: 0.75rem; }
+        .col-check { width: 50px; } .col-id { width: 45px; } .col-name { width: 150px; } .col-kana { width: 150px; } .col-gender { width: 85px; } .col-gen { width: 130px; } .col-level { width: 140px; } .col-rank { width: 45px; } .col-del { width: 50px; }
+        input[type="text"], select { width: 95%; padding: 6px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; font-family: inherit; font-size: 0.9rem; }
+        .bg-male { background-color: #e3f2fd !important; } .bg-female { background-color: #fce4ec !important; }
+        .lv-1 { background-color: #fff9c4 !important; } .lv-2 { background-color: #f5f5f5 !important; } .lv-3 { background-color: #efebe9 !important; } .lv-4 { background-color: #e8eaf6 !important; } .lv-5 { background-color: #fff3e0 !important; }
+        .gen-junior { background-color: #f0f4ff !important; } .gen-young { background-color: #ffebee !important; } .gen-adult { background-color: #f5f5f5 !important; } .gen-senior { background-color: #e8f5e9 !important; }
+        button { border: none; border-radius: 20px; padding: 8px 20px; font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 0 rgba(0,0,0,0.1); }
+        .btn-add { background: var(--soft-pink); color: #d64545; } .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.1rem; } .btn-bulk { background: #f0f0f0; color: #666; padding: 4px 12px; font-size: 0.75rem; }
         .rank-badge { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 0.75rem; color: white; font-weight: bold; }
-        .rank-1 { background: #d4af37; } .rank-2 { background: #c0c0c0; }
-        .rank-3 { background: #cd7f32; } .rank-4 { background: #1a237e; }
-        .rank-5 { background: #ef6c00; }
+        .rank-1 { background: #d4af37; } .rank-2 { background: #c0c0c0; } .rank-3 { background: #cd7f32; } .rank-4 { background: #1a237e; } .rank-5 { background: #ef6c00; }
         .illus-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
-        .sort-icon { font-size: 0.7em; margin-left: 3px; opacity: 0.8; }
         #result-area { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 25px; }
         .team-card { background: #fff; border: 3px solid var(--soft-green); border-radius: 30px; width: 260px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .team-title { font-size: 1.3rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
-<div id="main-app">
-    <div class="container">
-        <h1>池田ジュニア卓球 🐨🏯🍜</h1>
+<div class="container">
+    <h1>池田ジュニア卓球 🐨🏯🍜</h1>
 
-        <div class="whiteboard-area">
-            <textarea id="shared-memo" placeholder="ホワイトボード：内容を入力して枠外をクリックすると保存されます。" onchange="saveMemo(this.value)"></textarea>
-        </div>
-
-        <div style="display:flex; align-items:center;">
-            <div class="section-title">メンバー一覧</div>
-            <div id="status-indicator" class="status-indicator status-idle">待機中</div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-            <div>
-                <button class="btn-add" onclick="addMember()">＋ 追加</button>
-                <button class="btn-bulk" style="margin-left:8px;" onclick="bulkCheck(true)">全員 参加</button>
-                <button class="btn-bulk" onclick="bulkCheck(false)">全員 不参加</button>
-            </div>
-            <div style="font-weight:bold; font-size:0.9rem;">参加予定: <span id="selected-count">0</span> 名</div>
-        </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="col-check" onclick="sortBy('active')">参加 <span id="sort-active" class="sort-icon"></span></th>
-                        <th class="col-id" onclick="sortBy('id')">No <span id="sort-id" class="sort-icon"></span></th>
-                        <th class="col-name" onclick="sortBy('name')">氏名 <span id="sort-name" class="sort-icon"></span></th>
-                        <th class="col-kana" onclick="sortBy('kana')">フリガナ <span id="sort-kana" class="sort-icon"></span></th>
-                        <th class="col-gender" onclick="sortBy('gender')">性別 <span id="sort-gender" class="sort-icon"></span></th>
-                        <th class="col-gen" onclick="sortBy('gen')">世代 <span id="sort-gen" class="sort-icon"></span></th>
-                        <th class="col-level" onclick="sortBy('level')">練度 <span id="sort-level" class="sort-icon"></span></th>
-                        <th class="col-rank no-sort">R</th>
-                        <th class="col-del no-sort">削除</th>
-                    </tr>
-                </thead>
-                <tbody id="member-list"></tbody>
-            </table>
-        </div>
-
-        <div class="section-title">チーム分け機能</div>
-        <div style="text-align:center; margin-top:15px; background:rgba(255,255,255,0.7); padding:20px; border-radius:30px; border:1px solid #eee;">
-            <div style="margin-bottom:15px;">
-                <label><input type="radio" name="teamSize" value="4" checked> 4人ペア優先</label>
-                <label style="margin-left:20px;"><input type="radio" name="teamSize" value="3"> 3人ペア優先</label>
-            </div>
-            <button class="btn-exec" onclick="generateTeams()">チームを決める！</button>
-            <button class="btn-shuffle" style="margin-left:10px;" onclick="generateTeams()">🔄 やりなおす</button>
-        </div>
-        <div id="result-area"></div>
+    <div class="whiteboard-area">
+        <textarea id="shared-memo" placeholder="ホワイトボード：内容を変えて枠外をクリックするとスプレッドシートに保存されます。" onchange="saveMemo(this.value)"></textarea>
     </div>
+
+    <div style="display:flex; align-items:center;">
+        <div class="section-title">メンバー一覧</div>
+        <div id="status-indicator" class="status-indicator status-idle">待機中</div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <div>
+            <button class="btn-add" onclick="addMember()">＋ 追加</button>
+            <button class="btn-bulk" style="margin-left:8px;" onclick="bulkCheck(true)">全員 参加</button>
+            <button class="btn-bulk" onclick="bulkCheck(false)">全員 不参加</button>
+        </div>
+        <div style="font-weight:bold; font-size:0.9rem;">参加予定: <span id="selected-count">0</span> 名</div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-check" onclick="sortBy('active')">参加</th>
+                    <th class="col-id" onclick="sortBy('id')">No</th>
+                    <th class="col-name" onclick="sortBy('name')">氏名</th>
+                    <th class="col-kana" onclick="sortBy('kana')">フリガナ</th>
+                    <th>性別</th>
+                    <th>世代</th>
+                    <th>練度</th>
+                    <th>R</th>
+                    <th>削除</th>
+                </tr>
+            </thead>
+            <tbody id="member-list"></tbody>
+        </table>
+    </div>
+
+    <div class="section-title">チーム分け機能</div>
+    <div style="text-align:center; margin-top:15px; background:rgba(255,255,255,0.7); padding:20px; border-radius:30px; border:1px solid #eee;">
+        <div style="margin-bottom:15px;">
+            <label><input type="radio" name="teamSize" value="4" checked> 4人ペア優先</label>
+            <label style="margin-left:20px;"><input type="radio" name="teamSize" value="3"> 3人ペア優先</label>
+        </div>
+        <button class="btn-exec" onclick="generateTeams()">チームを決める！</button>
+    </div>
+    <div id="result-area"></div>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
+    const API_URL = "ここにデプロイ後のウェブアプリURLを貼ってください";
     
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
-    
-    const levelData = {
-        1: { name: "師範", icon: "🥇", class: "lv-1" },
-        2: { name: "ｺｰﾁ", icon: "🥈", class: "lv-2" },
-        3: { name: "ﾍﾞﾃﾗﾝ", icon: "🥉", class: "lv-3" },
-        4: { name: "ﾚｷﾞｭﾗｰ", icon: "🥋", class: "lv-4" },
-        5: { name: "ﾋﾞｷﾞﾅｰ", icon: "⚪", class: "lv-5" }
-    };
+    const levelData = { 1: { name: "師範", icon: "🥇", class: "lv-1" }, 2: { name: "ｺｰﾁ", icon: "🥈", class: "lv-2" }, 3: { name: "ﾍﾞﾃﾗﾝ", icon: "🥉", class: "lv-3" }, 4: { name: "ﾚｷﾞｭﾗｰ", icon: "🥋", class: "lv-4" }, 5: { name: "ﾋﾞｷﾞﾅｰ", icon: "⚪", class: "lv-5" } };
+    const genIcons = { "ｼﾞｭﾆｱ": { M: "🐣", F: "🐥", class: "gen-junior" }, "ﾔﾝｸﾞ": { M: "⚡", F: "✨", class: "gen-young" }, "ｱﾀﾞﾙﾄ": { M: "👔", F: "💄", class: "gen-adult" }, "ｼﾆｱ": { M: "🍵", F: "🌸", class: "gen-senior" } };
 
-    const genIcons = {
-        "ｼﾞｭﾆｱ": { M: "🐣", F: "🐥", class: "gen-junior" },
-        "ﾔﾝｸﾞ": { M: "⚡", F: "✨", class: "gen-young" },
-        "ｱﾀﾞﾙﾄ": { M: "👔", F: "💄", class: "gen-adult" },
-        "ｼﾆｱ": { M: "🍵", F: "🌸", class: "gen-senior" }
-    };
+    window.onload = loadData;
 
     function updateStatus(type, text) {
         const el = document.getElementById('status-indicator');
-        if(!el) return;
         el.className = `status-indicator status-${type}`;
         el.textContent = text;
         if(type === 'success') setTimeout(() => updateStatus('idle', '待機中'), 2000);
     }
 
-    window.onload = function() {
-        loadData();
-    };
-
-    // ホワイトボードのメモを保存する関数
     async function saveMemo(text) {
         updateStatus('loading', 'メモ保存中...');
         try {
-            await fetch(API_URL, { 
-                method: "POST", 
-                body: JSON.stringify({ action: 'update_memo', value: text }) 
-            });
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update_memo', value: text }) });
             updateStatus('success', 'メモ保存完了');
-        } catch (e) { 
-            updateStatus('error', 'メモ保存失敗'); 
-        }
+        } catch (e) { updateStatus('error', '保存失敗'); }
     }
 
     async function loadData() {
@@ -227,67 +133,30 @@
         try {
             const res = await fetch(API_URL);
             const data = await res.json();
-            
-            // GASから届いたメモを反映
-            if(data.memo !== undefined) {
-                document.getElementById('shared-memo').value = data.memo;
-            }
-            // メンバー一覧を反映
-            membersDB = data.members || data; 
+            if(data.memo !== undefined) document.getElementById('shared-memo').value = data.memo;
+            membersDB = data.members || []; 
             renderTable();
             updateStatus('success', '読込完了');
-        } catch (e) { 
-            updateStatus('error', '通信エラー'); 
-        }
-    }
-
-    function sortBy(key) {
-        currentSort.order = (currentSort.key === key) ? currentSort.order * -1 : 1;
-        currentSort.key = key;
-        renderTable();
+        } catch (e) { updateStatus('error', '通信エラー'); }
     }
 
     function renderTable() {
         const tbody = document.getElementById('member-list');
         tbody.innerHTML = '';
-        membersDB.sort((a, b) => {
-            let vA = a[currentSort.key], vB = b[currentSort.key];
-            if (typeof vA === 'boolean') return (vA === vB) ? 0 : (vA ? -1 : 1) * currentSort.order;
-            return (vA < vB ? -1 : 1) * currentSort.order;
-        });
-
-        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
-        const targetIcon = document.getElementById('sort-' + currentSort.key);
-        if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
-
+        membersDB.sort((a, b) => (a[currentSort.key] > b[currentSort.key] ? 1 : -1) * currentSort.order);
         membersDB.forEach(m => {
             const genderClass = m.gender === 'M' ? 'bg-male' : 'bg-female';
-            const genObj = genIcons[m.gen] || { M:"❓", F:"❓", class:"" };
-            const genIcon = m.gender === 'M' ? genObj.M : genObj.F;
+            const genObj = genIcons[m.gen] || { M:"?", F:"?", class:"" };
             const lvObj = levelData[m.level] || { name:"", icon:"", class:"" };
-            
             tbody.insertAdjacentHTML('beforeend', `
                 <tr>
-                    <td><input type="checkbox" class="active-check" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
+                    <td><input type="checkbox" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></td>
                     <td>${m.id}</td>
                     <td><input type="text" class="${genderClass}" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
                     <td><input type="text" class="${genderClass}" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
-                    <td><select class="${m.gender==='M'?'select-M':'select-F'}" onchange="sendUpdate(${m.id}, 'gender', this.value)">
-                        <option value="M" ${m.gender==='M'?'selected':''}>男性</option>
-                        <option value="F" ${m.gender==='F'?'selected':''}>女性</option>
-                    </select></td>
-                    <td><div style="display:flex; align-items:center;">
-                        <span class="illus-icon">${genIcon}</span>
-                        <select class="${genObj.class}" onchange="sendUpdate(${m.id}, 'gen', this.value)">
-                            ${Object.keys(genIcons).map(g=>`<option value="${g}" ${m.gen===g?'selected':''}>${g}</option>`).join('')}
-                        </select>
-                    </div></td>
-                    <td><div style="display:flex; align-items:center;">
-                        <span class="illus-icon">${lvObj.icon}</span>
-                        <select class="${lvObj.class}" onchange="sendUpdate(${m.id}, 'level', this.value)">
-                            ${[1,2,3,4,5].map(l=>`<option value="${l}" ${m.level===l?'selected':''}>${levelData[l].name}</option>`).join('')}
-                        </select>
-                    </div></td>
+                    <td>${m.gender==='M'?'男':'女'}</td>
+                    <td class="${genObj.class}">${m.gender==='M'?genObj.M:genObj.F} ${m.gen}</td>
+                    <td class="${lvObj.class}">${lvObj.icon} ${lvObj.name}</td>
                     <td><span class="rank-badge rank-${m.level}">${m.level}</span></td>
                     <td><button onclick="deleteMember(${m.id},'${m.name}')" style="background:none;box-shadow:none;color:#ccc">×</button></td>
                 </tr>
@@ -300,81 +169,29 @@
         updateStatus('loading', '保存中...');
         const m = membersDB.find(x => x.id === id);
         if(m) m[field] = value;
-        renderTable();
         try {
             await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
             updateStatus('success', '保存完了');
+            if(field === 'active') renderTable();
         } catch (e) { updateStatus('error', '保存失敗'); }
     }
 
-    async function bulkCheck(bool) {
-        if(!confirm((bool ? "全員参加" : "全員不参加") + "にしますか？")) return;
-        updateStatus('loading', '一括更新中...');
-        membersDB.forEach(m => m.active = bool);
-        renderTable();
-        for(let m of membersDB) {
-            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
-        }
-        updateStatus('success', '更新完了');
-    }
+    function sortBy(key) { currentSort.order *= (currentSort.key === key) ? -1 : 1; currentSort.key = key; renderTable(); }
 
-    async function addMember() {
-        if(!confirm("新規追加しますか？")) return;
-        updateStatus('loading', '追加中...');
-        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) });
-        loadData();
-    }
-
-    async function deleteMember(id, name) {
-        if(!confirm(name + "さんを削除しますか？")) return;
-        updateStatus('loading', '削除中...');
-        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) });
-        loadData();
-    }
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
+    async function addMember() { if(confirm("追加しますか？")) { await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) }); loadData(); } }
+    async function deleteMember(id, name) { if(confirm(name + "さんを削除しますか？")) { await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) }); loadData(); } }
+    
     function generateTeams() {
-        let list = membersDB.filter(m => m.active);
+        let list = membersDB.filter(m => m.active).sort(() => Math.random() - 0.5);
         if (list.length < 3) return alert("3人以上選んでね！");
-        let groups = {1:[], 2:[], 3:[], 4:[], 5:[], 'other':[]};
-        list.forEach(p => { groups[p.level] ? groups[p.level].push(p) : groups['other'].push(p); });
-        let sorted = [];
-        [1, 2, 3, 4, 5, 'other'].forEach(lvl => sorted = sorted.concat(shuffleArray([...groups[lvl]])));
         const size = parseInt(document.querySelector('input[name="teamSize"]:checked').value);
-        let numTeams = Math.ceil(sorted.length / size);
-        if (sorted.length / numTeams < 3) numTeams = Math.floor(sorted.length / 3);
-        let teams = Array.from({ length: Math.max(1, numTeams) }, () => []);
-        sorted.forEach((p, idx) => {
-            const cycle = Math.floor(idx / teams.length);
-            const tIdx = (cycle % 2 === 0) ? idx % teams.length : (teams.length - 1) - (idx % teams.length);
-            teams[tIdx].push(p);
-        });
+        let numTeams = Math.max(1, Math.floor(list.length / size));
+        let teams = Array.from({ length: numTeams }, () => []);
+        list.forEach((p, i) => teams[i % numTeams].push(p));
         const area = document.getElementById('result-area'); area.innerHTML = '';
         teams.forEach((t, i) => {
-            const avg = (t.reduce((s, p) => s + p.level, 0) / t.length).toFixed(1);
-            area.innerHTML += `<div class="team-card">
-                <div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
-                <div style="font-size:0.75rem;text-align:center;color:#999;margin-bottom:8px;">平均R:${avg} / 男:${t.filter(x=>x.gender==='M').length} 女:${t.filter(x=>x.gender==='F').length}</div>
-                <div class="team-members">
-                    ${t.map(p => {
-                        const gObj = genIcons[p.gen] || { M:"❓", F:"❓" };
-                        const gIcon = p.gender === 'M' ? gObj.M : gObj.F;
-                        const lIcon = (levelData[p.level] || {}).icon || "";
-                        return `
-                        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;margin-bottom:3px;border-radius:10px;font-size:0.95rem; ${p.gender==='M' ? 'background-color:#e3f2fd;' : 'background-color:#fce4ec;'}">
-                            <span><span style="margin-right:6px;">${gIcon}</span>${p.name}</span>
-                            <span><span style="margin-right:6px;">${lIcon}</span><span class="rank-badge rank-${p.level}">${p.level}</span></span>
-                        </div>`;
-                    }).join('')}
-                </div>
-            </div>`;
+            area.innerHTML += `<div class="team-card"><div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
+            ${t.map(p => `<div style="padding:4px; margin-bottom:2px; border-radius:8px; ${p.gender==='M'?'background:#e3f2fd':'background:#fce4ec'}">${p.name}</div>`).join('')}</div>`;
         });
     }
 </script>
