@@ -24,24 +24,8 @@
             background-attachment: fixed;
         }
 
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(163, 217, 255, 0.95); z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-        }
-        #login-box {
-            background: white; padding: 40px; border-radius: 40px;
-            text-align: center; border: 6px solid var(--ikeda-orange); width: 320px;
-        }
-        #pass-input {
-            padding: 12px; font-size: 1.2rem; width: 80%;
-            border: 3px solid #eee; border-radius: 15px;
-            text-align: center; margin: 20px 0; font-family: inherit;
-        }
-
-        #main-app { display: none; padding: 20px; }
         .container {
-            max-width: 1200px; margin: 0 auto;
+            max-width: 1200px; margin: 20px auto;
             background: rgba(255, 255, 255, 0.95);
             padding: 30px; border-radius: 50px;
             border: 5px solid var(--primary-blue);
@@ -50,6 +34,7 @@
 
         h1 { text-align: center; font-size: 2.8rem; color: #ff6f61; margin: 0 0 15px 0; }
 
+        /* ホワイトボードのデザイン */
         .whiteboard-area {
             background: #fff; border: 8px solid #ddd; border-radius: 15px;
             padding: 15px; margin: 20px 0;
@@ -134,30 +119,17 @@
         #result-area { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 25px; }
         .team-card { background: #fff; border: 3px solid var(--soft-green); border-radius: 30px; width: 260px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .team-title { font-size: 1.3rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 8px; }
-
-        .settings-panel { background: #fff; padding: 20px; border-radius: 25px; border: 1px solid #eee; margin-top: 30px; font-size: 0.85rem; }
         .illus-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
     </style>
 </head>
 <body>
-
-<div id="login-overlay">
-    <div id="login-box">
-        <h2>池田ジュニア卓球</h2>
-        <p>🏓 合言葉を入力してね</p>
-        <input type="password" id="pass-input" placeholder="ここに入力">
-        <br>
-        <button class="btn-exec" onclick="checkPass()">入室する</button>
-        <p id="login-msg" style="color:red; min-height:20px; margin-top:10px;"></p>
-    </div>
-</div>
 
 <div id="main-app">
     <div class="container">
         <h1>池田ジュニア卓球 🐨🏯🍜</h1>
 
         <div class="whiteboard-area">
-            <textarea id="shared-memo" placeholder="ホワイトボード：自動保存されます" onchange="saveMemo(this.value)"></textarea>
+            <textarea id="shared-memo" placeholder="ホワイトボード：入力すると自動で保存されます" onchange="saveMemo(this.value)"></textarea>
         </div>
 
         <div style="display:flex; align-items:center;">
@@ -203,33 +175,12 @@
             <button class="btn-shuffle" style="margin-left:10px;" onclick="generateTeams()">🔄 やりなおす</button>
         </div>
         <div id="result-area"></div>
-
-        <div class="section-title">システム設定</div>
-        <div class="settings-panel">
-            <label style="cursor:pointer;"><input type="checkbox" id="skip-auth-check" onchange="saveSystemSettings()"> 認証スキップ</label>
-            <span style="margin-left:20px;">合言葉: <input type="text" id="pass-setting" style="width:120px;" onchange="saveSystemSettings()"></span>
-            <button class="btn-bulk" style="margin-left:20px;" onclick="resetConfig();">合言葉を強制リセット</button>
-        </div>
     </div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwsCe-MXHrW7Cjd2je5GT93i4H1hYaVGdQNzFwmSV8LEoWclFaWCVx7JABaDjAuwLZ2/exec";
     
-    // 【最優先】合言葉を強制的に「iketaku」に戻す関数
-    function resetConfig() {
-        localStorage.setItem("iketaku_pass", "iketaku");
-        localStorage.setItem("iketaku_skip", "false");
-        localStorage.removeItem("tabletennis_auth");
-        alert("合言葉を「iketaku」にリセットしました。ページを再読み込みします。");
-        location.reload();
-    }
-
-    let config = { 
-        pass: localStorage.getItem("iketaku_pass") || "iketaku", 
-        skip: localStorage.getItem("iketaku_skip") === "true" 
-    };
-
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
     
@@ -256,39 +207,10 @@
         if(type === 'success') setTimeout(() => updateStatus('idle', '待機中'), 2000);
     }
 
+    // 読み込み時にパスワードなしで即開始
     window.onload = function() {
-        document.getElementById('pass-setting').value = config.pass;
-        document.getElementById('skip-auth-check').checked = config.skip;
-        
-        // ログイン状態またはスキップ設定のチェック
-        if(config.skip || localStorage.getItem("tabletennis_auth") === config.pass) {
-            showApp();
-        }
-    };
-
-    function checkPass() {
-        const input = document.getElementById('pass-input').value;
-        if(input === config.pass) {
-            localStorage.setItem("tabletennis_auth", config.pass);
-            showApp();
-        } else {
-            document.getElementById('login-msg').textContent = "合言葉が違います（半角小文字です）";
-        }
-    }
-
-    function saveSystemSettings() {
-        config.pass = document.getElementById('pass-setting').value || "iketaku";
-        config.skip = document.getElementById('skip-auth-check').checked;
-        localStorage.setItem("iketaku_pass", config.pass);
-        localStorage.setItem("iketaku_skip", config.skip);
-        alert("設定を保存しました。");
-    }
-
-    function showApp() {
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
         loadData();
-    }
+    };
 
     async function loadData() {
         updateStatus('loading', 'DB接続中...');
@@ -449,3 +371,4 @@
 </script>
 </body>
 </html>
+
