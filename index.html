@@ -117,4 +117,172 @@
     
     let membersDB = [];
     let currentSort = { key: 'id', order: 1 };
-    const levelData = { 1: { name: "師範", icon: "🥇", class: "lv-1" }, 2: { name: "ｺｰﾁ", icon: "🥈",
+    const levelData = { 1: { name: "師範", icon: "🥇", class: "lv-1" }, 2: { name: "ｺｰﾁ", icon: "🥈", class: "lv-2" }, 3: { name: "ﾍﾞﾃﾗﾝ", icon: "🥉", class: "lv-3" }, 4: { name: "ﾚｷﾞｭﾗｰ", icon: "🥋", class: "lv-4" }, 5: { name: "ﾋﾞｷﾞﾅｰ", icon: "⚪", class: "lv-5" } };
+    const genIcons = { "ｼﾞｭﾆｱ": { M: "🐣", F: "🐥", class: "gen-junior" }, "ﾔﾝｸﾞ": { M: "⚡", F: "✨", class: "gen-young" }, "ｱﾀﾞﾙﾄ": { M: "👔", F: "💄", class: "gen-adult" }, "ｼﾆｱ": { M: "🍵", F: "🌸", class: "gen-senior" } };
+
+    window.onload = loadData;
+
+    function updateStatus(type, text) {
+        const el = document.getElementById('status-indicator');
+        el.className = `status-indicator status-${type}`;
+        el.textContent = text;
+        if(type === 'success') setTimeout(() => updateStatus('idle', '待機中'), 2000);
+    }
+
+    async function saveMemo(text) {
+        updateStatus('loading', 'メモ保存中...');
+        try {
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update_memo', value: text }) });
+            updateStatus('success', 'メモ保存完了');
+        } catch (e) { updateStatus('error', '保存失敗'); }
+    }
+
+    async function loadData() {
+        updateStatus('loading', 'データ読込中...');
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            if(data.memo !== undefined) document.getElementById('shared-memo').value = data.memo;
+            membersDB = data.members || []; 
+            renderTable();
+            updateStatus('success', '読込完了');
+        } catch (e) { updateStatus('error', '通信エラー'); }
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('member-list');
+        tbody.innerHTML = '';
+        membersDB.sort((a, b) => {
+            let vA = a[currentSort.key], vB = b[currentSort.key];
+            if (typeof vA === 'boolean') return (vA === vB) ? 0 : (vA ? -1 : 1) * currentSort.order;
+            return (vA < vB ? -1 : 1) * currentSort.order;
+        });
+
+        document.querySelectorAll('.sort-icon').forEach(el => el.textContent = '');
+        const targetIcon = document.getElementById('sort-' + currentSort.key);
+        if(targetIcon) targetIcon.textContent = currentSort.order === 1 ? '▲' : '▼';
+
+        membersDB.forEach(m => {
+            const genderClass = m.gender === 'M' ? 'bg-male' : 'bg-female';
+            const genObj = genIcons[m.gen] || { M:"?", F:"?", class:"" };
+            const genIcon = m.gender === 'M' ? genObj.M : genObj.F;
+            const lvObj = levelData[m.level] || { name:"", icon:"", class:"" };
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td><div class="check-container"><input type="checkbox" class="active-check" ${m.active?'checked':''} onchange="sendUpdate(${m.id}, 'active', this.checked)"></div></td>
+                    <td>${m.id}</td>
+                    <td><input type="text" class="${genderClass}" value="${m.name}" onchange="sendUpdate(${m.id}, 'name', this.value)"></td>
+                    <td><input type="text" class="${genderClass}" value="${m.kana||''}" onchange="sendUpdate(${m.id}, 'kana', this.value)"></td>
+                    <td><select onchange="sendUpdate(${m.id}, 'gender', this.value)">
+                        <option value="M" ${m.gender==='M'?'selected':''}>男</option>
+                        <option value="F" ${m.gender==='F'?'selected':''}>女</option>
+                    </select></td>
+                    <td><div style="display:flex; align-items:center; justify-content:center;">
+                        <span class="illus-icon">${genIcon}</span>
+                        <select class="${genObj.class}" onchange="sendUpdate(${m.id}, 'gen', this.value)" style="width:auto; flex-grow:1;">
+                            ${Object.keys(genIcons).map(g=>`<option value="${g}" ${m.gen===g?'selected':''}>${g}</option>`).join('')}
+                        </select>
+                    </div></td>
+                    <td><div style="display:flex; align-items:center; justify-content:center;">
+                        <span class="illus-icon">${lvObj.icon}</span>
+                        <select class="${lvObj.class}" onchange="sendUpdate(${m.id}, 'level', this.value)" style="width:auto; flex-grow:1;">
+                            ${[1,2,3,4,5].map(l=>`<option value="${l}" ${m.level===l?'selected':''}>${levelData[l].name}</option>`).join('')}
+                        </select>
+                    </div></td>
+                    <td><span class="rank-badge rank-${m.level}">${m.level}</span></td>
+                    <td><button onclick="deleteMember(${m.id},'${m.name}')" style="background:none;box-shadow:none;color:#ccc">×</button></td>
+                </tr>
+            `);
+        });
+        document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
+    }
+
+    async function sendUpdate(id, field, value) {
+        updateStatus('loading', '保存中...');
+        const m = membersDB.find(x => x.id === id);
+        if(m) m[field] = value;
+        try {
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id, field, value }) });
+            updateStatus('success', '保存完了');
+            if(field === 'active') document.getElementById('selected-count').textContent = membersDB.filter(m => m.active).length;
+        } catch (e) { updateStatus('error', '保存失敗'); }
+    }
+
+    function sortBy(key) { currentSort.order *= (currentSort.key === key) ? -1 : 1; currentSort.key = key; renderTable(); }
+    async function addMember() { if(confirm("追加しますか？")) { await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'add' }) }); loadData(); } }
+    async function deleteMember(id, name) { if(confirm(name + "さんを削除しますか？")) { await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'delete', id }) }); loadData(); } }
+    
+    async function bulkCheck(bool) {
+        updateStatus('loading', '一括更新中...');
+        membersDB.forEach(m => m.active = bool);
+        renderTable();
+        for(let m of membersDB) {
+            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update', id: m.id, field: 'active', value: bool }) });
+        }
+        updateStatus('success', '完了');
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateTeams() {
+        let participants = membersDB.filter(m => m.active);
+        if (participants.length < 3) return alert("3人以上選んでね！");
+
+        // 初期ロジック: 練度ごとに分けてシャッフルし、蛇行型（S字）で配分
+        let groups = {1:[], 2:[], 3:[], 4:[], 5:[], 'other':[]};
+        participants.forEach(p => {
+            if (groups[p.level]) groups[p.level].push(p);
+            else groups['other'].push(p);
+        });
+
+        let sortedParticipants = [];
+        [1, 2, 3, 4, 5, 'other'].forEach(lvl => {
+            sortedParticipants = sortedParticipants.concat(shuffleArray([...groups[lvl]]));
+        });
+
+        const preferredSize = parseInt(document.querySelector('input[name="teamSize"]:checked').value);
+        let numTeams = Math.ceil(sortedParticipants.length / preferredSize);
+        if (sortedParticipants.length / numTeams < 3) numTeams = Math.floor(sortedParticipants.length / 3);
+        if (numTeams < 1) numTeams = 1;
+
+        let teams = Array.from({ length: numTeams }, () => []);
+        sortedParticipants.forEach((player, index) => {
+            const cycle = Math.floor(index / numTeams);
+            const teamIndex = (cycle % 2 === 0) ? index % numTeams : (numTeams - 1) - (index % numTeams);
+            teams[teamIndex].push(player);
+        });
+
+        const area = document.getElementById('result-area');
+        area.innerHTML = '';
+        teams.forEach((t, i) => {
+            const avg = (t.reduce((sum, p) => sum + p.level, 0) / t.length).toFixed(1);
+            const m = t.filter(x => x.gender === 'M').length;
+            const f = t.filter(x => x.gender === 'F').length;
+            area.innerHTML += `
+                <div class="team-card">
+                    <div class="team-title">チーム ${String.fromCharCode(65+i)}</div>
+                    <div style="font-size:0.75rem;text-align:center;color:#999;margin-bottom:8px;">平均R:${avg} / 男:${m} 女:${f}</div>
+                    <div class="team-members">
+                        ${t.map(p => {
+                            const gObj = genIcons[p.gen] || { M:"?", F:"?" };
+                            const gIcon = p.gender === 'M' ? gObj.M : gObj.F;
+                            const lIcon = (levelData[p.level] || {}).icon || "";
+                            return `
+                            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;margin-bottom:3px;border-radius:10px;font-size:0.95rem; ${p.gender==='M' ? 'background-color:#e3f2fd;' : 'background-color:#fce4ec;'}">
+                                <span><span style="margin-right:6px;">${gIcon}</span>${p.name}</span>
+                                <span><span style="margin-right:6px;">${lIcon}</span><span class="rank-badge rank-${p.level}">${p.level}</span></span>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+        });
+    }
+</script>
+</body>
+</html>
