@@ -34,7 +34,6 @@
 
         h1 { text-align: center; font-size: 2.8rem; color: #ff6f61; margin: 0 0 15px 0; }
 
-        /* ホワイトボードのデザイン */
         .whiteboard-area {
             background: #fff; border: 8px solid #ddd; border-radius: 15px;
             padding: 15px; margin: 20px 0;
@@ -47,7 +46,7 @@
             background: #fff; padding: 0 10px; font-weight: bold; color: #888; font-size: 0.9rem;
         }
         #shared-memo {
-            width: 100%; height: 100px; border: none; outline: none;
+            width: 100%; height: 120px; border: none; outline: none;
             font-family: inherit; font-size: 1.1rem; color: #333;
             background: transparent; resize: vertical; line-height: 1.5;
         }
@@ -109,17 +108,15 @@
         .btn-add { background: var(--soft-pink); color: #d64545; }
         .btn-exec { background: var(--ikeda-orange); color: white; font-size: 1.1rem; }
         .btn-bulk { background: #f0f0f0; color: #666; padding: 4px 12px; font-size: 0.75rem; }
-
         .rank-badge { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 0.75rem; color: white; font-weight: bold; }
         .rank-1 { background: #d4af37; } .rank-2 { background: #c0c0c0; }
         .rank-3 { background: #cd7f32; } .rank-4 { background: #1a237e; }
         .rank-5 { background: #ef6c00; }
-
+        .illus-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
         .sort-icon { font-size: 0.7em; margin-left: 3px; opacity: 0.8; }
         #result-area { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 25px; }
         .team-card { background: #fff; border: 3px solid var(--soft-green); border-radius: 30px; width: 260px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .team-title { font-size: 1.3rem; color: #4db6ac; text-align: center; border-bottom: 2px dashed #eee; margin-bottom: 8px; }
-        .illus-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
     </style>
 </head>
 <body>
@@ -129,7 +126,7 @@
         <h1>池田ジュニア卓球 🐨🏯🍜</h1>
 
         <div class="whiteboard-area">
-            <textarea id="shared-memo" placeholder="ホワイトボード：入力すると自動で保存されます" onchange="saveMemo(this.value)"></textarea>
+            <textarea id="shared-memo" placeholder="ホワイトボード：内容を入力して枠外をクリックすると保存されます。" onchange="saveMemo(this.value)"></textarea>
         </div>
 
         <div style="display:flex; align-items:center;">
@@ -207,29 +204,41 @@
         if(type === 'success') setTimeout(() => updateStatus('idle', '待機中'), 2000);
     }
 
-    // 読み込み時にパスワードなしで即開始
     window.onload = function() {
         loadData();
     };
 
-    async function loadData() {
-        updateStatus('loading', 'DB接続中...');
-        try {
-            const res = await fetch(API_URL);
-            const data = await res.json();
-            if(data.memo !== undefined) document.getElementById('shared-memo').value = data.memo;
-            membersDB = data.members || data; 
-            renderTable();
-            updateStatus('success', '読込完了');
-        } catch (e) { updateStatus('error', '通信エラー'); }
-    }
-
+    // ホワイトボードのメモを保存する関数
     async function saveMemo(text) {
         updateStatus('loading', 'メモ保存中...');
         try {
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: 'update_memo', value: text }) });
+            await fetch(API_URL, { 
+                method: "POST", 
+                body: JSON.stringify({ action: 'update_memo', value: text }) 
+            });
             updateStatus('success', 'メモ保存完了');
-        } catch (e) { updateStatus('error', 'メモ保存失敗'); }
+        } catch (e) { 
+            updateStatus('error', 'メモ保存失敗'); 
+        }
+    }
+
+    async function loadData() {
+        updateStatus('loading', 'データ読込中...');
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            
+            // GASから届いたメモを反映
+            if(data.memo !== undefined) {
+                document.getElementById('shared-memo').value = data.memo;
+            }
+            // メンバー一覧を反映
+            membersDB = data.members || data; 
+            renderTable();
+            updateStatus('success', '読込完了');
+        } catch (e) { 
+            updateStatus('error', '通信エラー'); 
+        }
     }
 
     function sortBy(key) {
@@ -371,4 +380,3 @@
 </script>
 </body>
 </html>
-
